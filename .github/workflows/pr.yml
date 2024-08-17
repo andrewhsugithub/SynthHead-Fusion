@@ -1,0 +1,38 @@
+﻿name: Check Submodule Commit
+
+on: 
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  check-submodule:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository with submodules
+      uses: actions/checkout@v3
+      with:
+        submodules: true # Ensure that the submodules are checked out
+
+    - name: Get local submodule commit
+      id: local_commit
+      run: |
+        git submodule status --recursive | awk '{print $1}' > local_commit.txt
+        echo "LOCAL_COMMIT=$(cat local_commit.txt)" >> $GITHUB_ENV
+
+    - name: Get remote submodule commit
+      id: remote_commit
+      run: |
+        git submodule foreach --recursive 'git ls-remote origin HEAD | awk '"'"'{print $1}'"'"' > remote_commit.txt'
+        echo "REMOTE_COMMIT=$(cat remote_commit.txt)" >> $GITHUB_ENV
+
+    - name: Compare commits
+      run: |
+        if [ "$LOCAL_COMMIT" = "$REMOTE_COMMIT" ]; then
+          echo "Submodule is up to date."
+        else
+          echo "Submodule is out of date."
+          exit 1
+        fi
