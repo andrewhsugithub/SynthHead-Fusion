@@ -1,3 +1,6 @@
 [submodule "GPT-Audio"]
 	path = GPT-Audio
 	url = git@github.com:h44343880/GPT-Audio.git
+[submodule "GPT-SoVITS-Inference"]
+	path = GPT-SoVITS-Inference
+	url = https://github.com/h44343880/GPT-SoVITS-Inference.git
