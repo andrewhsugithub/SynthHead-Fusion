@@ -4,6 +4,9 @@
 [submodule "GPT-SoVITS-Inference"]
 	path = GPT-SoVITS-Inference
 	url = git@github.com:h44343880/GPT-SoVITS-Inference.git
+[submodule "LivePortrait"]
+	path = LivePortrait
+	url = git@github.com:andrewhsugithub/LivePortrait.git
 [submodule "Real3DPortrait"]
 	path = Real3DPortrait
 	url = git@github.com:andrewhsugithub/Real3DPortrait.git
