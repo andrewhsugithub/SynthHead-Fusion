@@ -65,3 +65,9 @@ GPT-Audio:
 cd GPT-Audio
 bash ./start.sh
 ```
+
+# How to run all
+```bash
+cd scripts/
+bash ./run_all.sh
+```
