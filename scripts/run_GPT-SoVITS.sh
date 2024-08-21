@@ -11,5 +11,5 @@ cd ${DIR}
 
 echo "conda activate GPTSoVits"
 conda activate GPTSoVits
-echo "python app.py"
-python "app.py"
+echo "python pure_api.py"
+python "pure_api.py"

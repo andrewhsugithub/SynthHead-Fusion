@@ -1,1 +1,2 @@
 ﻿scripts/sync_repo.sh
+scripts/.env.sh

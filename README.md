@@ -3,7 +3,7 @@
 cd ml/
 git submodule add <remote_url> <repo_name>
 
-git status # see your repo is untracked or not
+git status # (optional): see your repo is untracked or not
 git add <repo_name>
 git commit -m <commit_message>
 git push
@@ -15,7 +15,7 @@ git switch main
 git pull
 git submodule update --recursive
 ```
-or 
+or (WIP: need to wait for all submodules to be added)
 ```bash
 cd ml/scripts/
 bash sync_repo.sh
@@ -67,7 +67,14 @@ bash ./start.sh
 ```
 
 # How to run all
+1. add env variables
 ```bash
-cd scripts/
-bash ./run_all.sh
+cp ./scripts/.env.sh.template ./scripts/.env.sh
 ```
+
+2.
+```bash
+bash ./scripts/run_all.sh
+```
+
+> Note: Change the driving video(output vid in Real3D) and source video(driving pose vid in Real3D) in LivePortrait to be the same length
