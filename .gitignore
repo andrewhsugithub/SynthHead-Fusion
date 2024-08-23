@@ -4,6 +4,8 @@ scripts/.env.sh
 # Temporary ignoring repos not added to submodules
 videoCutting/
 Real-ESRGAN/
+Read3D-Interface/
+
+# Probably never going to use it
 GPT-SoVITS/
 GeneFacePlusPlus/
-Read3D-Interface/
