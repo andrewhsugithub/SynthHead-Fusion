@@ -39,6 +39,9 @@ example:
 cd LivePortrait/
 git config --local user.email andrew1mail@gmail.com
 git config --local user.name andrewhsugithub
+
+git config --local user.email h0920185003@gmail.com
+git config --local user.name h44343880
 ```
 
 # How to run each model respectively
@@ -77,4 +80,10 @@ cp ./scripts/.env.sh.template ./scripts/.env.sh
 bash ./scripts/run_all.sh
 ```
 
-> Note: Change the driving video(output vid in Real3D) and source video(driving pose vid in Real3D) in LivePortrait to be the same length
+## TODO
+- [ ] add Read3D-Interface into submodule
+- [ ] add videoCutting into submodule
+- [ ] turn into web app
+- [ ] make realtime
+- [ ] use gfpgan to make higher resolution (can this be done in realtime though?)
+- [ ] use frame interpolation methods to make video more smooth (for demo purposes, can't do this in realtime)
