@@ -9,8 +9,10 @@ source "./scripts/.env.sh"
 # Start up GPT-SoVits-inference backend
 echo "Start up GPT-SoVITs inference service"
 {
-    bash "${CWD}/scripts/run_GPT-SoVITS.sh" "${CWD}/GPT-SoVITS-Inference"
+    bash "${CWD}/scripts/run_GPT-SoVITS.sh" "${CWD}/GPT-SoVITS-Inference" &
 }
+
+sleep 30s # TODO: fix this
 
 # Run ChatGPT api and GPT-SoVits-inference api
 echo "Start parsing article to create emotions with GPT-Audio"

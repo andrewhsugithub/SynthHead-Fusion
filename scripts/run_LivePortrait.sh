@@ -15,6 +15,6 @@ cd ${DIR}
 echo "conda activate LivePortrait"
 conda activate LivePortrait
 
-command="python inference.py --flag_do_torch_compile --source ${SOURCE_VID} --driving ${DRIVING_VID} --output-dir ${OUTPUT_DIR}"
+command="python inference.py --flag_do_torch_compile --loop --source ${SOURCE_VID} --driving ${DRIVING_VID} --output-dir ${OUTPUT_DIR}"
 echo "Running LivePortrait: ${command}"
 eval $command
