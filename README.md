@@ -1,4 +1,5 @@
 ﻿# Adding submodules
+> Note: to avoid sync errors I've temporarily put the repos that are not submodules in `.gitignore`, so if you've decided to add your repo to submodules <span style="color:red">***remember to remove them from `.gitignore`***</span>
 ```bash
 cd ml/
 git submodule add <remote_url> <repo_name>

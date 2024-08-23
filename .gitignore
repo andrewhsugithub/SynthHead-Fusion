@@ -1,2 +1,9 @@
-﻿scripts/sync_repo.sh
+﻿# scripts/sync_repo.sh
 scripts/.env.sh
+
+# Temporary ignoring repos not added to submodules
+videoCutting/
+Real-ESRGAN/
+GPT-SoVITS/
+GeneFacePlusPlus/
+Read3D-Interface/
