@@ -2,7 +2,7 @@
 
 # Initialize/Load variables
 source "./scripts/.env.server.sh"
-$BRANCH="$1"
+BRANCH_NAME="$1"
 
 # SSH into the server and execute commands
 ssh -tt $USER@$MAIN_SERVER << EOF
