@@ -22,6 +22,7 @@ ssh -tt $USER@$MAIN_SERVER << EOF
         else
             echo "Running: bash ${CWD}/scripts/run_\$service.sh ${PACKAGES_PATH}/\$service python main.py &"
             bash "${CWD}/scripts/run_\$service.sh" "${PACKAGES_PATH}/\$service" "python main.py" &
+        fi
     done
 
     wait
