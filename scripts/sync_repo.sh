@@ -28,4 +28,7 @@ ssh -tt $USER@$MAIN_SERVER << EOF
     # Switch to the desired branch
     echo "Switching to branch: $BRANCH_NAME"
     git switch $BRANCH_NAME
+
+    # Exit the SSH session
+    exit
 EOF
