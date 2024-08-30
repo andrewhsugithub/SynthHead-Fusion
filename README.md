@@ -10,6 +10,11 @@ git commit -m <commit_message>
 git push
 ```
 
+# how to git clone to local
+```bash
+git clone git@github.com:andrewhsugithub/SynthHead-Fusion.git --recursive
+```
+
 # Updating repo
 ```bash
 git switch main
@@ -19,7 +24,7 @@ git submodule update --recursive
 or (WIP: need to wait for all submodules to be added)
 ```bash
 cd ml/scripts/
-bash sync_repo.sh
+bash sync_repo.sh <branch_name> 
 ```
 
 # Contributing on same server
