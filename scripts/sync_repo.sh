@@ -6,6 +6,9 @@ BRANCH_NAME="$1"
 
 # SSH into the server and execute commands
 ssh -tt $USER@$MAIN_SERVER << EOF
+    # cd into the repository
+    cd $CWD
+
     # Reset the local repository to the latest HEAD
     echo "Resetting repository to HEAD"
     git reset --hard HEAD
@@ -23,6 +26,6 @@ ssh -tt $USER@$MAIN_SERVER << EOF
     git submodule update --init --recursive
 
     # Switch to the desired branch
-    echo "Switching to branch: $BRANCH"
-    git switch $BRANCH
+    echo "Switching to branch: $BRANCH_NAME"
+    git switch $BRANCH_NAME
 EOF
