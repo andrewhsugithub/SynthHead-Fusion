@@ -23,7 +23,7 @@ ssh -tt $USER@$MAIN_SERVER << EOF
 
     # Update submodules
     echo "Update submodules"
-    git submodule update --init --recursive
+    git submodule update --init --recursive --force
 
     # Switch to the desired branch
     echo "Switching to branch: $BRANCH_NAME"
