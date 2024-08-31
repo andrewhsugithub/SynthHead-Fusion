@@ -1,4 +1,5 @@
-﻿# scripts/sync_repo.sh
+﻿node_modules/
+
 scripts/.env.sh
 scripts/.env.server.sh
 
