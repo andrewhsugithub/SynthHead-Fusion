@@ -1,12 +1,15 @@
 [submodule "GPT-Audio"]
-	path = GPT-Audio
+	path = packages/GPT-Audio
 	url = git@github.com:h44343880/GPT-Audio.git
 [submodule "GPT-SoVITS-Inference"]
-	path = GPT-SoVITS-Inference
+	path = packages/GPT-SoVITS-Inference
 	url = git@github.com:h44343880/GPT-SoVITS-Inference.git
 [submodule "LivePortrait"]
-	path = LivePortrait
+	path = packages/LivePortrait
 	url = git@github.com:andrewhsugithub/LivePortrait.git
 [submodule "Real3DPortrait"]
-	path = Real3DPortrait
+	path = packages/Real3DPortrait
 	url = git@github.com:andrewhsugithub/Real3DPortrait.git
+[submodule "MuseTalk"]
+	path = packages/MuseTalk
+	url = git@github.com:andrewhsugithub/MuseTalk.git

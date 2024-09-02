@@ -1,5 +1,6 @@
 ﻿# scripts/sync_repo.sh
 scripts/.env.sh
+scripts/.env.server.sh
 
 # Temporary ignoring repos not added to submodules
 videoCutting/
