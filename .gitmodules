@@ -13,3 +13,6 @@
 [submodule "MuseTalk"]
 	path = packages/MuseTalk
 	url = git@github.com:andrewhsugithub/MuseTalk.git
+[submodule "packages/videoCutting"]
+	path = packages/videoCutting
+	url = https://github.com/Jason0411202/videoCutting.git
