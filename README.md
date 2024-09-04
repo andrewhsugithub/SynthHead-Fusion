@@ -10,10 +10,44 @@ git clone git@github.com:andrewhsugithub/SynthHead-Fusion.git --recursive
 
 ```bash
 cp ./scripts/.env.sh.template ./scripts/.env.sh
-cp ./scripts/.env.server.sh.template ./scripts/.env.server.sh
+cp ./scripts/services/.env.server.sh.template ./scripts/services/.env.server.sh
 ```
 
 Enter the env values
+
+## Spinning up the servers for each microservice
+
+Run each service in an independent shell.
+
+1. GPT-SoVITS-Inference
+
+```bash
+bash ./scripts/services/GPT-SoVITS-Inference.sh
+```
+
+2. GPT-Audio (depends on GPT-SoVITS-Inference)
+
+```bash
+bash ./scripts/services/GPT-Audio.sh
+```
+
+3. MuseTalk
+
+```bash
+bash ./scripts/services/MuseTalk.sh
+```
+
+4. Real3DPortrait
+
+```bash
+bash ./scripts/services/Real3DPortrait.sh
+```
+
+5. LivePortrait
+
+```bash
+bash ./scripts/services/LivePortrait.sh
+```
 
 # Adding submodules
 

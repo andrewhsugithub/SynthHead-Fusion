@@ -8,6 +8,7 @@ const app = new Hono();
 
 app.use(logger());
 
+//TODO: add middleware to see 1. if user has access to the bucket 2. if the file exists 3. if the file is public (output/videos only)
 app.use(
   `/${process.env.BUCKET_DIR_NAME}/*`,
   serveStatic({ root: process.env.BUCKET_RELATIVE_PATH })
