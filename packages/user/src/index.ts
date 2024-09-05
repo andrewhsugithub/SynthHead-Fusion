@@ -37,13 +37,16 @@ app.post("/register", zValidator("json", registerSchema), async (c) => {
     // TODO: change to kafka for async and decoupling from registration so that the user can be registered even if the bucket creation fails
     // TODO: add response schema
     // TODO: add retry logic
-    const response: any = await fetch("http://localhost:3002/create-bucket", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ bucketName: userId }),
-    });
+    const response: any = await fetch(
+      `${process.env.BUCKET_BASE_URL}:3002/create-bucket`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ bucketName: userId }),
+      }
+    );
 
     if (!response.ok) {
       return c.text("Error contacting bucket service", 500);

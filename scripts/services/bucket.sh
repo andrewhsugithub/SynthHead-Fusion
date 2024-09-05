@@ -17,7 +17,7 @@ ssh -tt $USER@$MAIN_SERVER << EOF
         cd "\$service"
         echo "Starting \$service service"
         echo "Running: pnpm bucket:start"
-        bash "pnpm bucket:start"
+        pnpm bucket:start
     done
 
     wait
