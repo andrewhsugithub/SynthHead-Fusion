@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Initialize/Load variables
-source "./scripts/.env.server.sh"
+source "./scripts/services/.env.server.sh"
 BRANCH_NAME="$1"
 
 # SSH into the server and execute commands
