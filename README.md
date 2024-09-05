@@ -25,11 +25,15 @@ Run each service in an independent shell.
 bash ./scripts/services/GPT-SoVITS-Inference.sh
 ```
 
+Port: 5000
+
 2. GPT-Audio (depends on GPT-SoVITS-Inference)
 
 ```bash
 bash ./scripts/services/GPT-Audio.sh
 ```
+
+Port: 7998
 
 3. MuseTalk
 
@@ -37,17 +41,31 @@ bash ./scripts/services/GPT-Audio.sh
 bash ./scripts/services/MuseTalk.sh
 ```
 
+Port:7999
+
 4. Real3DPortrait
 
 ```bash
 bash ./scripts/services/Real3DPortrait.sh
 ```
 
+Port: 8001
+
 5. LivePortrait
 
 ```bash
 bash ./scripts/services/LivePortrait.sh
 ```
+
+Port: 8000
+
+6. Bucket
+
+```bash
+bash ./scripts/services/bucket.sh
+```
+
+Port: 3002
 
 # Adding submodules
 
