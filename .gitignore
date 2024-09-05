@@ -11,3 +11,6 @@ Read3D-Interface/
 # Probably never going to use it
 GPT-SoVITS/
 GeneFacePlusPlus/
+
+# Ignoring the buckets folder
+buckets/

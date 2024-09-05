@@ -152,6 +152,7 @@ bash ./scripts/run_all.sh
 
 ## TODO
 
+- [ ] add logger, openapi, docs to every service
 - [ ] add Read3D-Interface into submodule
 - [ ] add videoCutting into submodule
 - [ ] turn into web app

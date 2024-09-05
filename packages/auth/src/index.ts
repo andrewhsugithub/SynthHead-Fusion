@@ -6,13 +6,22 @@ import { z } from "zod";
 import { zValidator } from "@hono/zod-validator";
 import "dotenv/config";
 import fs from "fs";
+import { cors } from "hono/cors";
+import { logger } from "hono/logger";
+
+const customLogger = (message: string, ...rest: string[]) => {
+  console.log(message, ...rest);
+};
 
 const app = new Hono();
+app.use(cors({ origin: "*" }));
+app.use(logger(customLogger));
 
 const createJWTToken = async (
   tokenType: "access-token" | "refresh-token",
   username: string,
-  password: string
+  password: string,
+  userId: string
 ) => {
   const fifteenMinInSec = 15 * 60;
   const thirtyDaysInSec = 30 * 24 * 60 * 60;
@@ -29,7 +38,7 @@ const createJWTToken = async (
     nbf: 123, //TODO
     role: "admin", //TODO: think about the roles (admin, logged-in, guest)
     iss: "auth-service",
-    sub: "user-id",
+    sub: userId,
   };
   const privateKey = fs.readFileSync(
     process.env.JWT_PRIVATE_KEY_PATH!,
@@ -49,42 +58,66 @@ const registerSchema = z.object({
 app.post("/register", zValidator("json", registerSchema), async (c) => {
   const validatedData = c.req.valid("json");
   const { username, password } = validatedData;
-  const accessToken = await createJWTToken("access-token", username, password);
+  // sync call to user service
+  // TODO: change to kafka for async
+  // TODO: add response schema
+  const response: any = await fetch("http://localhost:3001/register", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ username, password }),
+  });
+
+  if (!response.ok) {
+    return c.text("Error contacting authentication service", 500);
+  }
+
+  const responseBody = await response.json();
+  console.log("response:", responseBody);
+
+  const accessToken = await createJWTToken(
+    "access-token",
+    username,
+    password,
+    responseBody?.userId
+  );
+
   const refreshToken = await createJWTToken(
     "refresh-token",
     username,
-    password
+    password,
+    responseBody?.userId
   );
-  setCookie(c, "accessToken", accessToken, {
-    httpOnly: true,
-    sameSite: "strict",
-    secure: true,
-  });
+
   setCookie(c, "refreshToken", refreshToken, {
     httpOnly: true,
     sameSite: "strict",
     secure: true,
   });
-  //TODO: save user to the database
-  return c.text("User registered successfully!");
+
+  return c.json({
+    msg: "User registered successfully!",
+    accessToken,
+  });
 });
 
-app.get("/hi", async (c) => {
+app.get("/login", async (c) => {
   const tokenToVerify = c.req.header("Authorization")?.split(" ")[1]!;
   const publicKey = fs.readFileSync(process.env.JWT_PUBLIC_KEY_PATH!, "utf-8"); // format public key
 
   const alg: JWTAlg = process.env.JWT_ALG as JWTAlg;
   const decodedPayload = await verify(tokenToVerify, publicKey, alg);
-  console.log(decodedPayload["sub"]); // get user id
+  customLogger("user id:", `${decodedPayload["sub"]}`); // get user id
   return c.json(decodedPayload);
 });
 
 app.get("/", (c) => {
-  return c.text("Hello Hono!");
+  return c.text("Hello auth service!");
 });
 
 const port = 3000;
-console.log(`Server is running on port ${port}`);
+console.log(`Server is running on port http://localhost:${port}`);
 
 serve({
   fetch: app.fetch,
