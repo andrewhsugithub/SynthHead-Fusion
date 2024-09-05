@@ -29,6 +29,14 @@ ssh -tt $USER@$MAIN_SERVER << EOF
     echo "Switching to branch: $BRANCH_NAME"
     git switch $BRANCH_NAME
 
+    # Install correct node version specified in .nvmrc
+    echo "Installing correct node version"
+    nvm install
+
+    # Install dependencies
+    echo "Installing dependencies"
+    pnpm install
+
     # Exit the SSH session
     exit
 EOF
