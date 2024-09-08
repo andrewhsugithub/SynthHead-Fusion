@@ -70,7 +70,7 @@ app.post("/register", zValidator("json", registerSchema), async (c) => {
   });
 
   if (!response.ok) {
-    return c.text("Error contacting authentication service", 500);
+    return c.text("Error contacting user service", 500);
   }
 
   const responseBody = await response.json();
