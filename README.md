@@ -15,6 +15,13 @@ cp ./scripts/services/.env.server.sh.template ./scripts/services/.env.server.sh
 
 Enter the env values
 
+3. spin up servers
+
+```bash
+docker compose up
+pnpm dev
+```
+
 ## Spinning up the servers for each microservice
 
 Run each service in an independent shell.

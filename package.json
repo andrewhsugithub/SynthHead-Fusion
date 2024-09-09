@@ -7,6 +7,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "musetalk:db": "pnpm -F @synthhead-fusion/musetalk musetalk:db",
     "user:db": "pnpm -F @synthhead-fusion/user user:db",
+    "auth:start": "pnpm -F @synthhead-fusion/auth auth:start",
+    "user:start": "pnpm -F @synthhead-fusion/user user:start",
+    "dev": "pnpm auth:start & pnpm user:start",
     "start": "pnpm -r start"
   },
   "keywords": [],

@@ -2,11 +2,11 @@
 
 # Usage: to start up Real3DPortrait services
 
-# Initialize/Load variables
-source "./scripts/services/.env.server.sh"
+# Add the main server to the known hosts in the container
+ssh-keyscan -H $MAIN_SERVER >> ~/.ssh/known_hosts
 
 # SSH into the server and execute commands
-ssh -tt $USER@$MAIN_SERVER << EOF
+sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no -tt $USER@$MAIN_SERVER << EOF
 
     # Navigate to the packages directory
     cd $PACKAGES_PATH
