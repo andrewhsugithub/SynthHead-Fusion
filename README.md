@@ -2,25 +2,83 @@
 
 1. git clone
 
-```bash
-git clone git@github.com:andrewhsugithub/SynthHead-Fusion.git --recursive
-```
+   ```bash
+   git clone git@github.com:andrewhsugithub/SynthHead-Fusion.git --recursive
+   ```
 
 2. copy env files
 
-```bash
-cp ./scripts/.env.sh.template ./scripts/.env.sh
-cp ./scripts/services/.env.server.sh.template ./scripts/services/.env.server.sh
-```
+   ```bash
+   cp ./scripts/.env.sh.template ./scripts/.env.sh
+   cp ./scripts/services/.env.server ./scripts/services/.env.server
+   ```
 
-Enter the env values
+   Enter the env values
 
-3. spin up servers
+3. copy env and paste your pubic key(.pem file) into keys folder for each microservice
 
-```bash
-docker compose up
-pnpm dev
-```
+   - auth service
+
+   ```bash
+   cd packages/auth/
+   cp .env.template .env
+   ```
+
+   - bucket service
+
+   ```bash
+   cd packages/bucket/
+   cp .env.template .env
+   cp .env.server.template .env.server
+   ```
+
+   - GPT-Audio
+
+   ```bash
+   cd packages/GPT-Audio/
+   cp .env.template .env
+   cp .env.server.template .env.server
+   ```
+
+   - GPT-SoVITS-Inference
+
+   ```bash
+   cd packages/GPT-SoVITS-Inference/
+   cp .env.server.template .env.server
+   ```
+
+   - LivePortrait
+
+   ```bash
+   cd packages/LivePortrait/
+   cp .env.server.template .env.server
+   ```
+
+   - MuseTalk
+
+   ```bash
+   cd packages/MuseTalk/
+   cp .env.template .env
+   cp .env.server.template .env.server
+   ```
+
+   - Real3DPortrait
+
+   ```bash
+   cd packages/Real3DPortrait/
+   cp .env.server.template .env.server
+   ```
+
+   Enter the env values
+
+4. spin up servers
+
+   ```bash
+   docker compose up
+   pnpm dev
+   ```
+
+> Note: all env values can be found in discord
 
 ## Spinning up the servers for each microservice
 
