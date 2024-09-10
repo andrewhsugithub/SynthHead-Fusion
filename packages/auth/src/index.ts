@@ -61,13 +61,17 @@ app.post("/register", zValidator("json", registerSchema), async (c) => {
   // sync call to user service
   // TODO: change to kafka for async
   // TODO: add response schema
-  const response: any = await fetch("http://localhost:3001/register", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ username, password }),
-  });
+  console.log("user service base url:", process.env.USER_SERVICE_BASE_URL);
+  const response: any = await fetch(
+    `${process.env.USER_SERVICE_BASE_URL!}/register`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ username, password }),
+    }
+  );
 
   if (!response.ok) {
     return c.text("Error contacting user service", 500);
@@ -116,8 +120,8 @@ app.get("/", (c) => {
   return c.text("Hello auth service!");
 });
 
-const port = 3000;
-console.log(`Server is running on port http://localhost:${port}`);
+const port = 3001;
+console.log(`Auth service is running on port http://localhost:${port}`);
 
 serve({
   fetch: app.fetch,

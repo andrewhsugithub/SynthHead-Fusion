@@ -37,8 +37,9 @@ app.post("/register", zValidator("json", registerSchema), async (c) => {
     // TODO: change to kafka for async and decoupling from registration so that the user can be registered even if the bucket creation fails
     // TODO: add response schema
     // TODO: add retry logic
+    console.log("Creating bucket for user", process.env.BUCKET_BASE_URL);
     const response: any = await fetch(
-      `${process.env.BUCKET_BASE_URL}:3002/create-bucket`,
+      `${process.env.BUCKET_BASE_URL!}/create-bucket`,
       {
         method: "POST",
         headers: {
@@ -95,8 +96,8 @@ app.get("/", (c) => {
   return c.text("Hello user service!");
 });
 
-const port = 3001;
-console.log(`Server is running on port http://localhost:${port}`);
+const port = 3003;
+console.log(`User service is running on port http://localhost:${port}`);
 
 serve({
   fetch: app.fetch,

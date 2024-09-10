@@ -9,7 +9,10 @@
     "user:db": "pnpm -F @synthhead-fusion/user user:db",
     "auth:start": "pnpm -F @synthhead-fusion/auth auth:start",
     "user:start": "pnpm -F @synthhead-fusion/user user:start",
-    "dev": "pnpm auth:start & pnpm user:start",
+    "bucket:start": "pnpm -F @synthhead-fusion/bucket bucket:start",
+    "app:start": "pnpm -F @synthhead-fusion/app dev",
+    "dev:local": "pnpm auth:start & pnpm user:start & pnpm bucket:start & pnpm app:start & pnpm user:db",
+    "dev:remote": "pnpm auth:start & pnpm user:start & pnpm app:start",
     "start": "pnpm -r start"
   },
   "keywords": [],

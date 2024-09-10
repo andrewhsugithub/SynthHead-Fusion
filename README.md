@@ -75,7 +75,7 @@
 
    ```bash
    docker compose up
-   pnpm dev
+   pnpm dev:remote
    ```
 
 > Note: all env values can be found in discord
