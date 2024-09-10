@@ -1,7 +1,7 @@
 ﻿node_modules/
 
 scripts/.env.sh
-scripts/services/.env.server
+scripts/services/.env.server.sh
 
 # Temporary ignoring repos not added to submodules
 videoCutting/
