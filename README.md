@@ -4,6 +4,8 @@
 
    ```bash
    git clone git@github.com:andrewhsugithub/SynthHead-Fusion.git --recursive
+   git submodule update --recursive
+   pnpm i
    ```
 
 2. copy env files

@@ -1,17 +1,11 @@
-import { Hono } from "hono";
 import { jwt } from "hono/jwt";
-import { handle } from "@hono/node-server/vercel";
+import { Hono } from "hono";
 import type { JwtVariables } from "hono/jwt";
 import type { JWTAlg } from "@packages/types/jwt";
-import { readFile } from "fs/promises";
+import { handle } from "hono/vercel";
 
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
+export const runtime = "edge";
 
-// Specify the variable types to infer the `c.get('jwtPayload')`:
 type Variables = JwtVariables;
 
 const app = new Hono<{ Variables: Variables }>().basePath("/api");
@@ -19,12 +13,12 @@ const app = new Hono<{ Variables: Variables }>().basePath("/api");
 app.use(
   "/*",
   jwt({
-    secret: await readFile(process.env.JWT_PUBLIC_KEY_PATH!, "utf-8"),
+    secret: process.env.JWT_PUBLIC_KEY!,
     alg: process.env.JWT_ALG as JWTAlg,
   })
 );
 
-app.get("/hello", (c) => {
+app.get("/hello", async (c) => {
   return c.json({
     message: "Hello Next.js!",
   });
