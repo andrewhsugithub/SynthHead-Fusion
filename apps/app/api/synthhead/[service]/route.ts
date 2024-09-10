@@ -8,7 +8,7 @@ export const runtime = "edge";
 
 type Variables = JwtVariables;
 
-const app = new Hono<{ Variables: Variables }>().basePath("/api");
+const app = new Hono<{ Variables: Variables }>().basePath("/api/synthhead");
 
 app.use(
   "/*",

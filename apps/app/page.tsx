@@ -1,19 +1,56 @@
-'use client'
-import { useEffect, useState } from 'react'
+"use client";
+import {
+  type RegisterUserFormSchema,
+  RegisterUserSchema,
+} from "@packages/schema/registerSchema";
+import { registerUserResponse } from "@packages/types/jwt";
+import { zodResolver } from "@hookform/resolvers/zod";
+import React from "react";
+import { useForm, SubmitHandler } from "react-hook-form";
 
 export default function Home() {
-  const [message, setMessage] = useState()
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const res = await fetch('/api/hello')
-      const { message } = await res.json()
-      setMessage(message)
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm<RegisterUserFormSchema>({
+    resolver: zodResolver(RegisterUserSchema),
+  });
+  const onSubmit: SubmitHandler<RegisterUserFormSchema> = async (data) => {
+    console.log(data);
+    try {
+      // TODO: turn axios
+      const response = await fetch("/api/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+      const userResponse: registerUserResponse = await response.json();
+      console.log(userResponse);
+      localStorage.setItem("accessToken", userResponse.accessToken);
+    } catch (e: any) {
+      console.log(e);
     }
-    fetchData()
-  }, [])
+  };
 
-  if (!message) return <p>Loading...</p>
+  return (
+    <div>
+      <h1>Register</h1>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <input type="text" placeholder="username" {...register("username")} />
+        {errors.username && <p>{errors.username.message}</p>}
 
-  return <p>{message}</p>
+        <input
+          type="password"
+          placeholder="password"
+          {...register("password")}
+        />
+        {errors.password && <p>{errors.password.message}</p>}
+        <button type="submit">Register</button>
+      </form>
+    </div>
+  );
 }

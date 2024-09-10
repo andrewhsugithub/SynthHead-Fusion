@@ -8,10 +8,14 @@
   },
   "dependencies": {
     "@hono/node-server": "^1.12.2",
+    "@hono/zod-validator": "^0.2.2",
+    "@hookform/resolvers": "^3.9.0",
     "hono": "^4.5.11",
     "next": "14.2.5",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "react-hook-form": "^7.53.0",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/node": "18.11.18",

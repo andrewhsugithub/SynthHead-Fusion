@@ -13,3 +13,8 @@
   | "ES512"
   | "EdDSA"
   | undefined;
+
+export type registerUserResponse = {
+  msg: string;
+  accessToken: string;
+};

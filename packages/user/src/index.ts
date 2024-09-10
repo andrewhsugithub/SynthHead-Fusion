@@ -2,23 +2,18 @@ import { eq } from "drizzle-orm";
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 import { db } from "../lib/db/db";
-import { z } from "zod";
 import { zValidator } from "@hono/zod-validator";
 import { users } from "../lib/db/schema/user.js";
 import "dotenv/config";
 import bcrypt from "bcrypt";
 import { cors } from "hono/cors";
+import { RegisterUserSchema } from "../../schema/registerSchema";
 
 const app = new Hono();
 
 app.use(cors({ origin: "*" }));
 
-const registerSchema = z.object({
-  username: z.string().min(3).max(255),
-  password: z.string().min(8).max(255),
-});
-
-app.post("/register", zValidator("json", registerSchema), async (c) => {
+app.post("/register", zValidator("json", RegisterUserSchema), async (c) => {
   const validatedData = c.req.valid("json");
   const { username, password } = validatedData;
 
@@ -62,7 +57,7 @@ app.post("/register", zValidator("json", registerSchema), async (c) => {
   }
 });
 
-app.get("/login", zValidator("json", registerSchema), async (c) => {
+app.get("/login", zValidator("json", RegisterUserSchema), async (c) => {
   const validatedData = c.req.valid("json");
   const { username, password } = validatedData;
 
