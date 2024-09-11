@@ -13,6 +13,7 @@
     "app:start": "pnpm -F @synthhead-fusion/app web:start",
     "dev:local": "pnpm auth:start & pnpm user:start & pnpm bucket:start & pnpm app:start & pnpm user:db",
     "dev:remote": "pnpm auth:start & pnpm user:start & pnpm app:start",
+    "dev:remote:windows": "start pnpm auth:start && start pnpm user:start && start pnpm app:start",
     "start": "pnpm -r start"
   },
   "keywords": [],
