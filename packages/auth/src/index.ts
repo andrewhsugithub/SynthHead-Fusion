@@ -1,7 +1,7 @@
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 import { sign, verify } from "hono/jwt";
-import { setCookie } from "hono/cookie";
+import { setCookie, getCookie } from "hono/cookie";
 import { z } from "zod";
 import { zValidator } from "@hono/zod-validator";
 import "dotenv/config";
@@ -17,6 +17,14 @@ const app = new Hono();
 app.use(cors({ origin: "*" }));
 app.use(logger(customLogger));
 
+interface UserPayload extends Awaited<ReturnType<typeof verify>> {
+  username?: string;
+  password?: string;
+  role?: string;
+  iss?: string;
+  sub?: string;
+}
+
 const createJWTToken = async (
   tokenType: "access-token" | "refresh-token",
   username: string,
@@ -26,7 +34,7 @@ const createJWTToken = async (
   const fifteenMinInSec = 15 * 60;
   const thirtyDaysInSec = 30 * 24 * 60 * 60;
 
-  const payload = {
+  const payload: UserPayload = {
     username: username,
     password: password,
     exp:
@@ -104,6 +112,28 @@ app.post("/register", zValidator("json", registerSchema), async (c) => {
     msg: "User registered successfully!",
     accessToken,
   });
+});
+
+app.post("/refresh", async (c) => {
+  const refreshToken = getCookie(c, "refreshToken");
+  const publicKey = fs.readFileSync(process.env.JWT_PUBLIC_KEY_PATH!, "utf-8"); // format public key
+
+  const alg: JWTAlg = process.env.JWT_ALG as JWTAlg;
+  const decodedPayload = (await verify(
+    refreshToken!,
+    publicKey,
+    alg
+  )) as UserPayload;
+  customLogger("user id:", `${decodedPayload["sub"]}`); // get user id
+
+  const accessToken = await createJWTToken(
+    "access-token",
+    decodedPayload["username"]!,
+    decodedPayload["password"]!,
+    decodedPayload["sub"]!
+  );
+
+  return c.json({ accessToken });
 });
 
 app.get("/login", async (c) => {
