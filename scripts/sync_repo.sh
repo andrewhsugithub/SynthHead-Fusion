@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Initialize/Load variables
-source "./scripts/.env.server.sh"
+source "./scripts/services/.env.server.sh"
 BRANCH_NAME="$1"
 
 # SSH into the server and execute commands
@@ -28,6 +28,14 @@ ssh -tt $USER@$MAIN_SERVER << EOF
     # Switch to the desired branch
     echo "Switching to branch: $BRANCH_NAME"
     git switch $BRANCH_NAME
+
+    # Install correct node version specified in .nvmrc
+    echo "Installing correct node version"
+    nvm install
+
+    # Install dependencies
+    echo "Installing dependencies"
+    pnpm install
 
     # Exit the SSH session
     exit

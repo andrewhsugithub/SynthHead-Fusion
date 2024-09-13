@@ -1,0 +1,19 @@
+services:
+  postgres:
+    image: postgres:16.4-alpine
+    ports:
+      - "5433:5432"
+    env_file: .env
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+  redis_cache:
+    image: redis:7.4-alpine
+    volumes:
+      - redis_data_cache:/data
+volumes:
+  pgdata:
+  redis_data_cache:

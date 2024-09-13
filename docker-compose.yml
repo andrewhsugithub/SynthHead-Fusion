@@ -1,0 +1,55 @@
+﻿services:
+  bucket_service:
+    container_name: bucket_service
+    build:
+      context: ./packages/bucket
+      dockerfile: Dockerfile.bucket
+    env_file:
+      - ./packages/bucket/.env.server
+  gpt-sovits-inference_service:
+    container_name: gpt-sovits-inference_service
+    build:
+      context: ./packages/GPT-SoVITS-Inference
+      dockerfile: Dockerfile.GPT-SoVITS-Inference
+    env_file:
+      - ./packages/GPT-SoVITS-Inference/.env.server
+  gpt-audio_service:
+    container_name: gpt-audio_service
+    build:
+      context: ./packages/GPT-Audio
+      dockerfile: Dockerfile.GPT-Audio
+    env_file:
+      - ./packages/GPT-Audio/.env.server
+    depends_on:
+      - gpt-sovits-inference_service
+  musetalk_service:
+    container_name: musetalk_service
+    build:
+      context: ./packages/MuseTalk
+      dockerfile: Dockerfile.MuseTalk
+    env_file:
+      - ./packages/MuseTalk/.env.server
+  liveportrait_service:
+    container_name: liveportrait_service
+    build:
+      context: ./packages/LivePortrait
+      dockerfile: Dockerfile.LivePortrait
+    env_file:
+      - ./packages/LivePortrait/.env.server
+  real3dportrait_service:
+    container_name: real3dportrait_service
+    build:
+      context: ./packages/Real3DPortrait
+      dockerfile: Dockerfile.Real3DPortrait
+    env_file:
+      - ./packages/Real3DPortrait/.env.server
+  postgres_user:
+    image: postgres:16.4-alpine
+    container_name: postgres_user
+    ports:
+      - "5433:5432"
+    env_file: ./packages/user/.env
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+volumes:
+  pgdata:

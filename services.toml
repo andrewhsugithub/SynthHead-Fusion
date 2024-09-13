@@ -1,0 +1,3 @@
+﻿[MuseTalk]
+# The port that the MuseTalk service will listen on
+MUSETALK_PATH = ""
