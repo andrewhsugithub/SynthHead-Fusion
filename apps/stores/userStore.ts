@@ -1,6 +1,8 @@
 ﻿import { create } from "zustand";
 import { registerUserResponse } from "@packages/types/jwt";
 import { type RegisterUserFormSchema } from "@packages/schema/registerSchema";
+import { persist } from "zustand/middleware";
+import axios from "axios";
 
 // Types
 type States = {
@@ -9,7 +11,7 @@ type States = {
 
 type Actions = {
   onCreateUser: (data: RegisterUserFormSchema) => void;
-  checkLoginStatus: () => void;
+  getAccessToken: () => string | null;
   onRefresh: () => Promise<void>;
 };
 
@@ -22,53 +24,46 @@ const initialState: States = {
 const useUserStore = create<States & Actions>((set) => ({
   ...initialState,
 
+  getAccessToken: () => {
+    return localStorage.getItem("accessToken");
+  },
+
   // Function to handle user login, stores access token and updates state
   onCreateUser: async (data) => {
     // TODO: add retry logic
     try {
       // TODO: turn axios
-      const response = await fetch("/api/auth/register", {
-        method: "POST",
+      const response = await axios.post("/api/auth/register", data, {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(data),
       });
-      const userResponse: registerUserResponse = await response.json();
+      const userResponse: registerUserResponse = response.data;
       console.log(userResponse);
       set({
         hasUserLogin: true,
       });
 
-      // Store access token in localStorage
       localStorage.setItem("accessToken", userResponse.accessToken);
     } catch (e) {
       console.error("Error creating user:", e);
     }
   },
 
-  // Function to check login status (e.g., on app load)
-  checkLoginStatus: () => {
-    const accessToken = localStorage.getItem("accessToken");
-
-    if (accessToken) {
-      set({
-        hasUserLogin: true,
-      });
-    }
-  },
-
   // Function to refresh the token (typically called when an API call fails due to token expiration)
   onRefresh: async () => {
     try {
-      const response = await fetch("/api/auth/refresh", {
-        method: "POST",
-        credentials: "include", // This ensures the refresh token is sent via cookies
-      });
+      const response = await axios.post(
+        "/api/auth/refresh",
+        {}, // Empty body (if needed, replace with appropriate data)
+        {
+          withCredentials: true, // Ensures cookies (like refresh tokens) are sent
+        }
+      );
 
-      if (response.ok) {
-        const userResponse = await response.json();
-
+      if (response.status === 200) {
+        const userResponse = response.data;
+        console.log(userResponse);
         // Update access token in localStorage
         localStorage.setItem("accessToken", userResponse.accessToken);
       } else {

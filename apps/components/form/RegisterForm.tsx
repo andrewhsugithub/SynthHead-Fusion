@@ -5,7 +5,6 @@ import {
   type RegisterUserFormSchema,
   RegisterUserSchema,
 } from "@packages/schema/registerSchema";
-import { registerUserResponse } from "@packages/types/jwt";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { Button } from "../ui/button";

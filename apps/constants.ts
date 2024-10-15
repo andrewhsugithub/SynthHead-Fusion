@@ -1,5 +1,16 @@
 ﻿export const GLOBAL_TITLE = "Synthhead Fusion";
-export const GLOBAL_DESCRIPTION = "Creative AI web demo by PicCollage";
+export const GLOBAL_DESCRIPTION = "Synthhead web demo";
+
+export const PROTECTED_ROUTES = [
+  process.env.AUTH_SERVICE_BASE_URL,
+  process.env.BUCKET_SERVICE_BASE_URL,
+  process.env.USER_SERVICE_BASE_URL,
+  process.env.GPT_AUDIO_SERVICE_BASE_URL,
+  process.env.GPT_SOVITS_INFERENCE_SERVICE_BASE_URL,
+  process.env.LIVEPORTRAIT_SERVICE_BASE_URL,
+  process.env.MUSETALK_SERVICE_BASE_URL,
+  process.env.REAL3DPORTRAIT_SERVICE_BASE_URL,
+];
 
 export const PAGES = [
   {
@@ -161,4 +172,14 @@ const constants = {
   PAGES_BY_ROUTE,
 };
 
-export default constants;
+const EMOTIONS_LIST = [
+  "happy",
+  "sad",
+  "angry",
+  "cheerful",
+  "depressed",
+] as const;
+
+export type EMOTION_TYPES = (typeof EMOTIONS_LIST)[number];
+
+export { constants, EMOTIONS_LIST };

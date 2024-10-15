@@ -21,6 +21,7 @@ const ChatBox = () => {
 
   // when creating a new chat, check if user is logged in
   useEffect(() => {
+    console.log("User logged in");
     if (hasUserLogin) return;
     updateActiveModal(ModalType.USER);
   }, [hasUserLogin]);
