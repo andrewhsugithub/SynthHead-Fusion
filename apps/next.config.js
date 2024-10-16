@@ -8,8 +8,8 @@ const nextConfig = {
         destination: `${process.env.AUTH_SERVICE_BASE_URL}/:path*`,
       },
       {
-        source: "/api/:path*",
-        destination: `${process.env.BUCKET_SERVICE_BASE_URL}/:path*`,
+        source: "/api/upload/:path*",
+        destination: `${process.env.BUCKET_SERVICE_BASE_URL}/auth/upload/:path*`,
       },
       {
         source: "/api/:path*",

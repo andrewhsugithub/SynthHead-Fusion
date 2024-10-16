@@ -13,7 +13,7 @@ import { Button } from "../ui/button";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { EmotionSelector } from "../EmotionSelector";
-import { type EMOTION_TYPES } from "@/constants";
+import { EMOTIONS_LIST, type EMOTION_TYPES } from "@/constants";
 import ImageForm from "../form/ImageForm";
 
 const ImageCard = ({}) => {
@@ -26,18 +26,22 @@ const ImageCard = ({}) => {
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Select an image for each emotion</CardTitle>
+      <CardHeader className="pb-0">
+        <CardTitle className="text-center">
+          Select an image for each emotion
+        </CardTitle>
         <EmotionSelector
           selectedEmotion={selectedEmotion}
           handleSelectEmotion={handleSelectEmotion}
         />
-        <CardDescription>{selectedEmotion}</CardDescription>
       </CardHeader>
-      <ImageForm emotion={selectedEmotion} />
-      <CardFooter>
-        <Button>Save changes</Button>
-      </CardFooter>
+      {EMOTIONS_LIST.map((emotion) => (
+        <ImageForm
+          key={emotion}
+          emotion={emotion}
+          className={emotion !== selectedEmotion ? "hidden" : ""}
+        />
+      ))}
     </Card>
   );
 };

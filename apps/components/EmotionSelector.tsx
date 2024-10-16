@@ -26,22 +26,24 @@ export function EmotionSelector({
   handleSelectEmotion,
 }: EmotionSelectorProps) {
   return (
-    <Select value={selectedEmotion} onValueChange={handleSelectEmotion}>
-      <SelectTrigger className="w-[180px]">
-        <SelectValue placeholder="Select an emotion" />
-      </SelectTrigger>
-      <SelectContent>
-        <SelectScrollUpButton />
-        <SelectGroup>
-          <SelectLabel>Emotions</SelectLabel>
-          {EMOTIONS_LIST.map((emotion) => (
-            <SelectItem key={emotion} value={emotion}>
-              {emotion}
-            </SelectItem>
-          ))}
-        </SelectGroup>
-        <SelectScrollDownButton />
-      </SelectContent>
-    </Select>
+    <div className="flex justify-center p-4">
+      <Select value={selectedEmotion} onValueChange={handleSelectEmotion}>
+        <SelectTrigger className="w-[180px]">
+          <SelectValue placeholder="Select an emotion" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectScrollUpButton />
+          <SelectGroup>
+            <SelectLabel>Emotions</SelectLabel>
+            {EMOTIONS_LIST.map((emotion) => (
+              <SelectItem key={emotion} value={emotion} className="lowercase">
+                {emotion}
+              </SelectItem>
+            ))}
+          </SelectGroup>
+          <SelectScrollDownButton />
+        </SelectContent>
+      </Select>
+    </div>
   );
 }

@@ -1,6 +1,5 @@
 ﻿import useUserStore from "@/stores/userStore";
 import axios, { type AxiosError, type InternalAxiosRequestConfig } from "axios";
-import { on } from "events";
 const BASEURL = "http://localhost:3000";
 
 interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
@@ -32,41 +31,41 @@ protectedAxios.interceptors.request.use(
   }
 );
 
-protectedAxios.interceptors.response.use(
-  (response) => {
-    return response;
-  },
-  async (error: AxiosError) => {
-    console.log("error", error);
-    const originalRequest: CustomAxiosRequestConfig | undefined = error.config;
-    console.log("originalRequest", originalRequest);
+// protectedAxios.interceptors.response.use(
+//   (response) => {
+//     return response;
+//   },
+//   async (error: AxiosError) => {
+//     console.log("error", error);
+//     const originalRequest: CustomAxiosRequestConfig | undefined = error.config;
+//     console.log("originalRequest", originalRequest);
 
-    if (error?.response?.status === 401 && !originalRequest?._retry) {
-      const errorData = error?.response?.data as any;
-      const errorMessage = errorData?.message;
-      originalRequest!._retry = true;
+//     if (error?.response?.status === 401 && !originalRequest?._retry) {
+//       const errorData = error?.response?.data as any;
+//       const errorMessage = errorData?.message;
+//       originalRequest!._retry = true;
 
-      if (errorMessage === "JwtTokenExpired") {
-        try {
-          // to avoid infinite loop if fetching refresh token fails
-          if (originalRequest?.url !== "/api/auth/refresh") {
-            await generateRefreshToken();
-            return protectedAxios(originalRequest!);
-          }
-        } catch (refreshError) {
-          console.error("Token refresh failed:", refreshError);
-        }
-      }
-    }
-    return Promise.reject(error);
-  }
-);
+//       if (errorMessage === "JwtTokenExpired") {
+//         try {
+//           // to avoid infinite loop if fetching refresh token fails
+//           if (originalRequest?.url !== "/api/auth/refresh") {
+//             await generateRefreshToken();
+//             return protectedAxios(originalRequest!);
+//           }
+//         } catch (refreshError) {
+//           console.error("Token refresh failed:", refreshError);
+//         }
+//       }
+//     }
+//     return Promise.reject(error);
+//   }
+// );
 
-export const generateRefreshToken = async () => {
-  try {
-    const refreshAccessToken = useUserStore.getState().onRefresh;
-    await refreshAccessToken();
-  } catch (error: any) {
-    console.error("axios:", error);
-  }
-};
+// export const generateRefreshToken = async () => {
+//   try {
+//     const refreshAccessToken = useUserStore.getState().onRefresh;
+//     await refreshAccessToken();
+//   } catch (error: any) {
+//     console.error("axios:", error);
+//   }
+// };
