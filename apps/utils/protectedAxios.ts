@@ -21,7 +21,7 @@ protectedAxios.interceptors.request.use(
     const accessToken = useUserStore.getState().getAccessToken();
 
     if (accessToken) {
-      config.headers.Authorization = `Bearer ${accessToken}`;
+      config.headers["Authorization"] = `Bearer ${accessToken}`;
     }
 
     return config;
@@ -31,41 +31,34 @@ protectedAxios.interceptors.request.use(
   }
 );
 
-// protectedAxios.interceptors.response.use(
-//   (response) => {
-//     return response;
-//   },
-//   async (error: AxiosError) => {
-//     console.log("error", error);
-//     const originalRequest: CustomAxiosRequestConfig | undefined = error.config;
-//     console.log("originalRequest", originalRequest);
+protectedAxios.interceptors.response.use(
+  (response) => response,
+  async (error: AxiosError) => {
+    const originalRequest: CustomAxiosRequestConfig | undefined = error.config;
 
-//     if (error?.response?.status === 401 && !originalRequest?._retry) {
-//       const errorData = error?.response?.data as any;
-//       const errorMessage = errorData?.message;
-//       originalRequest!._retry = true;
+    if (error?.response?.status === 401 && !originalRequest?._retry) {
+      const errorData = error?.response?.data as any;
+      const errorMessage = errorData?.message;
+      originalRequest!._retry = true;
 
-//       if (errorMessage === "JwtTokenExpired") {
-//         try {
-//           // to avoid infinite loop if fetching refresh token fails
-//           if (originalRequest?.url !== "/api/auth/refresh") {
-//             await generateRefreshToken();
-//             return protectedAxios(originalRequest!);
-//           }
-//         } catch (refreshError) {
-//           console.error("Token refresh failed:", refreshError);
-//         }
-//       }
-//     }
-//     return Promise.reject(error);
-//   }
-// );
+      try {
+        await generateRefreshToken();
+        const newAccessToken = useUserStore.getState().getAccessToken();
+        originalRequest!.headers["Authorization"] = `Bearer ${newAccessToken}`;
+        return protectedAxios(originalRequest!);
+      } catch (refreshError) {
+        console.error("Token refresh failed:", refreshError);
+      }
+    }
+    return Promise.reject(error);
+  }
+);
 
-// export const generateRefreshToken = async () => {
-//   try {
-//     const refreshAccessToken = useUserStore.getState().onRefresh;
-//     await refreshAccessToken();
-//   } catch (error: any) {
-//     console.error("axios:", error);
-//   }
-// };
+export const generateRefreshToken = async () => {
+  try {
+    const refreshAccessToken = useUserStore.getState().onRefresh;
+    await refreshAccessToken();
+  } catch (error) {
+    console.error("refresh error:", error);
+  }
+};

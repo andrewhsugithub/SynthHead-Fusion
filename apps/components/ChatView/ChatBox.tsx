@@ -5,9 +5,9 @@ import useChatStore from "@/stores/chat";
 import { Button } from "../ui/button";
 import useUserStore from "@/stores/userStore";
 import { Icon } from "@iconify/react";
-import AvatarSettingsForm from "../form/AvatarSettingsForm";
-import RegisterForm from "../form/RegisterForm";
 import { ModalType, useModalStore } from "@/stores/modalStore";
+import OnboardModal from "../Modals/OnboardModal";
+import AvatarSettingsModal from "../Modals/AvatarSettingsModal";
 
 const ChatBox = () => {
   const [counter, setCounter] = React.useState(0);
@@ -49,11 +49,11 @@ const ChatBox = () => {
         <Button onClick={onCreateTarget}>Create Target</Button>
       )}
 
-      <RegisterForm
+      <OnboardModal
         isOpen={activeModal === ModalType.USER}
         onClose={() => updateActiveModal(null)}
       />
-      <AvatarSettingsForm
+      <AvatarSettingsModal
         isOpen={activeModal === ModalType.AVATAR}
         onClose={() => updateActiveModal(null)}
       />

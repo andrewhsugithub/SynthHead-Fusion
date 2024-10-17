@@ -57,33 +57,29 @@ app.post("/register", zValidator("json", RegisterUserSchema), async (c) => {
   }
 });
 
-app.get("/login", zValidator("json", RegisterUserSchema), async (c) => {
+app.post("/login", zValidator("json", RegisterUserSchema), async (c) => {
   const validatedData = c.req.valid("json");
   const { username, password } = validatedData;
 
   try {
     const user = await db.query.users.findFirst({
-      with: {
-        username: {
-          where: eq(users.username, username),
-        },
-      },
+      where: eq(users.username, username),
     });
     if (!user) {
-      return c.text("User not found", 404);
+      return c.json({ message: "User not found" }, 404);
     }
 
     // Compare provided password with hashed password
     const isMatch = await bcrypt.compare(password, user.password!);
 
     if (!isMatch) {
-      return c.text("Invalid credentials", 401);
+      return c.json({ message: "Password doesn't match" }, 401);
     }
 
     // Proceed with login (e.g., generate tokens, etc.)
-    return c.json({ message: "Login successful" });
+    return c.json({ message: "Login successful", userId: user.id });
   } catch (error) {
-    return c.text("Error logging in", 500);
+    return c.json({ message: "Error logging in" }, 500);
   }
 });
 

@@ -13,12 +13,12 @@ import { Input } from "../ui/input";
 import useUserStore from "@/stores/userStore";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 
-interface RegisterFormProps {
+interface LogInFormProps {
   onClose: () => void;
 }
 
-const RegisterForm = ({ onClose }: RegisterFormProps) => {
-  const onCreateUser = useUserStore((state) => state.onCreateUser);
+const LogInForm = ({ onClose }: LogInFormProps) => {
+  const onLogin = useUserStore((state) => state.onLogin);
 
   const {
     register,
@@ -30,7 +30,7 @@ const RegisterForm = ({ onClose }: RegisterFormProps) => {
   });
   const onSubmit: SubmitHandler<RegisterUserFormSchema> = async (data) => {
     console.log(data);
-    onCreateUser(data);
+    onLogin(data);
     reset();
     onClose();
   };
@@ -38,7 +38,7 @@ const RegisterForm = ({ onClose }: RegisterFormProps) => {
   return (
     <Card className="mx-4 p-4 pt-0">
       <CardHeader>
-        <CardTitle className="text-center">Register</CardTitle>
+        <CardTitle className="text-center">Log In</CardTitle>
       </CardHeader>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="grid grid-rows-2 gap-y-4">
@@ -68,13 +68,11 @@ const RegisterForm = ({ onClose }: RegisterFormProps) => {
           </div>
         </div>
         <div className="flex justify-center pt-4">
-          <Button variant={"outline"} type="submit">
-            Register
-          </Button>
+          <Button type="submit">Log In</Button>
         </div>
       </form>
     </Card>
   );
 };
 
-export default RegisterForm;
+export default LogInForm;

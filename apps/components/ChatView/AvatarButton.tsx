@@ -3,7 +3,7 @@
 import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ModalType, useModalStore } from "@/stores/modalStore";
-import RegisterForm from "../form/RegisterForm";
+import OnboardModal from "../Modals/OnboardModal";
 
 const AvatarButton = () => {
   const { activeModal, updateActiveModal } = useModalStore();
@@ -15,7 +15,7 @@ const AvatarButton = () => {
         <AvatarImage src="https://github.com/shadcn.png" />
         <AvatarFallback>CN</AvatarFallback>
       </Avatar>
-      <RegisterForm
+      <OnboardModal
         isOpen={activeModal === ModalType.USER}
         onClose={() => updateActiveModal(null)}
       />

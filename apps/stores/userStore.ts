@@ -1,8 +1,8 @@
 ﻿import { create } from "zustand";
 import { registerUserResponse } from "@packages/types/jwt";
 import { type RegisterUserFormSchema } from "@packages/schema/registerSchema";
-import { persist } from "zustand/middleware";
 import axios from "axios";
+import { access } from "fs";
 
 // Types
 type States = {
@@ -10,6 +10,7 @@ type States = {
 };
 
 type Actions = {
+  onLogin: (data: RegisterUserFormSchema) => void;
   onCreateUser: (data: RegisterUserFormSchema) => void;
   getAccessToken: () => string | null;
   onRefresh: () => Promise<void>;
@@ -26,6 +27,26 @@ const useUserStore = create<States & Actions>((set) => ({
 
   getAccessToken: () => {
     return localStorage.getItem("accessToken");
+  },
+
+  onLogin: async (data) => {
+    try {
+      // TODO: turn axios
+      const response = await axios.post("/api/auth/login", data, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const userResponse: registerUserResponse = response.data;
+      console.log(userResponse);
+      set({
+        hasUserLogin: true,
+      });
+
+      localStorage.setItem("accessToken", userResponse.accessToken);
+    } catch (e) {
+      console.error("Error logging in:", e);
+    }
   },
 
   // Function to handle user login, stores access token and updates state
@@ -53,17 +74,16 @@ const useUserStore = create<States & Actions>((set) => ({
   // Function to refresh the token (typically called when an API call fails due to token expiration)
   onRefresh: async () => {
     try {
-      const response = await axios.post(
-        "/api/auth/refresh",
-        {}, // Empty body (if needed, replace with appropriate data)
-        {
-          withCredentials: true, // Ensures cookies (like refresh tokens) are sent
-        }
-      );
+      const response = await axios.get("/api/auth/refresh", {
+        withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
+      });
 
       if (response.status === 200) {
         const userResponse = response.data;
-        console.log(userResponse);
+        console.log("refreshed", userResponse);
         // Update access token in localStorage
         localStorage.setItem("accessToken", userResponse.accessToken);
       } else {

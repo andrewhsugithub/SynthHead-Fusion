@@ -1,12 +1,6 @@
 ﻿"use client";
 
 import React from "react";
-import {
-  type RegisterUserFormSchema,
-  RegisterUserSchema,
-} from "@packages/schema/registerSchema";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, SubmitHandler } from "react-hook-form";
 import { Button } from "../ui/button";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
@@ -21,22 +15,15 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
 import ImageCard from "../Cards/ImageCard";
-import { EmotionSelector } from "../EmotionSelector";
+import VideoCard from "../Cards/VideoCard";
 
-interface AvatarSettingsFormProps {
+interface AvatarSettingsModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-const AvatarSettingsForm = ({ isOpen, onClose }: AvatarSettingsFormProps) => {
+const AvatarSettingsModal = ({ isOpen, onClose }: AvatarSettingsModalProps) => {
   return (
     <Modal open={isOpen} onClose={onClose}>
       <h1>Avatar Settings</h1>
@@ -73,7 +60,9 @@ const AvatarSettingsForm = ({ isOpen, onClose }: AvatarSettingsFormProps) => {
             </CardFooter>
           </Card>
         </TabsContent>
-        <TabsContent value="videos"></TabsContent>
+        <TabsContent value="videos">
+          <VideoCard />
+        </TabsContent>
       </Tabs>
 
       <Modal.Action>
@@ -86,4 +75,4 @@ const AvatarSettingsForm = ({ isOpen, onClose }: AvatarSettingsFormProps) => {
   );
 };
 
-export default AvatarSettingsForm;
+export default AvatarSettingsModal;

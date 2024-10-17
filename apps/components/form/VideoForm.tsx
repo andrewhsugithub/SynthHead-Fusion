@@ -1,8 +1,6 @@
-﻿import React, { useEffect } from "react";
+import React from "react";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
-import { EMOTION_TYPES } from "@/constants";
-import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { Button } from "../ui/button";
 import { protectedAxios } from "@/utils/protectedAxios";
@@ -11,75 +9,70 @@ import { Progress } from "../ui/progress";
 import { ModalType, useModalStore } from "@/stores/modalStore";
 import { Icon } from "@iconify/react";
 
-const getImgURL = (file: File) => URL.createObjectURL(file);
+const getVideoURL = (file: File) => URL.createObjectURL(file);
 
-interface ImageThumbnailProps {
-  img: File | null;
-  emotion: EMOTION_TYPES;
-  unselectImage: () => void;
+interface VideoThumbnailProps {
+  video: File | null;
+  unselectVideo: () => void;
 }
 
-const ImageThumbnail = ({
-  img,
-  emotion,
-  unselectImage,
-}: ImageThumbnailProps) => {
+const VideoPreview = ({ video, unselectVideo }: VideoThumbnailProps) => {
   return (
     <div className="relative h-full w-full">
-      {img ? (
+      {video ? (
         <>
           <Icon
             icon="proicons:cancel"
-            onClick={unselectImage}
+            onClick={unselectVideo}
             className="absolute right-2 text-black w-6 h-6 top-2 hover:cursor-pointer z-50"
           />
-          <Image
-            src={getImgURL(img)}
-            alt={`Upload ${emotion} image`}
-            fill
-            objectFit="contain"
-          />
+          <video
+            controls
+            className="w-full h-full"
+            preload="none"
+            autoPlay
+            muted
+            playsInline
+          >
+            <source src={getVideoURL(video)} />
+          </video>
         </>
       ) : (
         <div className="h-full pb-5 flex justify-center items-end text-center ">
-          Upload {emotion} Image
+          Upload Video
         </div>
       )}
     </div>
   );
 };
 
-interface ImageFormProps extends React.HTMLAttributes<HTMLDivElement> {
-  emotion: EMOTION_TYPES;
-}
+interface VideoFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
-const ImageForm = ({ emotion, className }: ImageFormProps) => {
-  const [img, setImg] = React.useState<File | null>(null);
+const VideoForm = ({ className }: VideoFormProps) => {
+  const [video, setVideo] = React.useState<File | null>(null);
   const [uploadPercentage, setUploadPercentage] = React.useState(0);
   const isActive =
     useModalStore((state) => state.activeModal) === ModalType.AVATAR;
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (!isActive) {
-      setImg(null);
+      setVideo(null);
       setUploadPercentage(0);
     }
   }, [isActive]);
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleVideoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setImg(file);
-      setUploadPercentage(0);
+      setVideo(file);
     }
   };
 
   const handleSubmit = async () => {
-    if (!img) return;
+    if (!video) return;
 
     const formData = new FormData();
-    formData.append("uploadedFile", img);
-    formData.append("emotion", emotion);
+    formData.append("uploadedFile", video);
 
     await protectedAxios
       .postForm("/upload", formData, {
@@ -90,7 +83,7 @@ const ImageForm = ({ emotion, className }: ImageFormProps) => {
         },
       })
       .catch((e) => {
-        console.error("Error uploading image:", e);
+        console.error("Error uploading Video:", e);
         setUploadPercentage(0);
       });
   };
@@ -99,34 +92,24 @@ const ImageForm = ({ emotion, className }: ImageFormProps) => {
     <>
       <div className={cn("p-4 flex justify-center items-center", className)}>
         <div className=" bg-slate-200 w-[400px] h-[400px] rounded-md border-dotted border-2 border-black">
-          <Label htmlFor={emotion} className="hover:cursor-pointer">
-            <ImageThumbnail
-              img={img}
-              emotion={emotion}
-              unselectImage={() => setImg(null)}
-            />
+          <Label htmlFor="video" className="hover:cursor-pointer">
+            <VideoPreview video={video} unselectVideo={() => setVideo(null)} />
           </Label>
           <Input
+            id="video" //TODO: rename
             type="file"
-            id={emotion}
-            accept="image/*"
-            onChange={handleImageChange}
+            accept="video/*"
+            onChange={handleVideoChange}
             className="hidden"
           />
           <Progress className="-my-1" value={uploadPercentage} />
         </div>
       </div>
       <div className={cn("p-4 flex justify-center items-center", className)}>
-        <Button onClick={handleSubmit}>
-          Upload
-          <span className="text-red-500 uppercase italic">
-            &nbsp;{emotion}&nbsp;
-          </span>
-          image
-        </Button>
+        <Button onClick={handleSubmit}>Upload Video</Button>
       </div>
     </>
   );
 };
 
-export default ImageForm;
+export default VideoForm;
