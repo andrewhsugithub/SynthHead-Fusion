@@ -4,7 +4,6 @@ scripts/.env.sh
 scripts/services/.env.server.sh
 
 # Temporary ignoring repos not added to submodules
-videoCutting/
 Real-ESRGAN/
 Read3D-Interface/
 
