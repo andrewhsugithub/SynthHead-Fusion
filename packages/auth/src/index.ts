@@ -1,7 +1,7 @@
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 import { sign, verify } from "hono/jwt";
-import { setCookie } from "hono/cookie";
+import { setCookie, getCookie } from "hono/cookie";
 import { z } from "zod";
 import { zValidator } from "@hono/zod-validator";
 import "dotenv/config";
@@ -17,6 +17,14 @@ const app = new Hono();
 app.use(cors({ origin: "*" }));
 app.use(logger(customLogger));
 
+interface UserPayload extends Awaited<ReturnType<typeof verify>> {
+  username?: string;
+  password?: string;
+  role?: string;
+  iss?: string;
+  sub?: string;
+}
+
 const createJWTToken = async (
   tokenType: "access-token" | "refresh-token",
   username: string,
@@ -25,21 +33,24 @@ const createJWTToken = async (
 ) => {
   const fifteenMinInSec = 15 * 60;
   const thirtyDaysInSec = 30 * 24 * 60 * 60;
+  const now = Math.floor(Date.now() / 1000);
 
-  const payload = {
+  const payload: UserPayload = {
     username: username,
     password: password,
     exp:
-      Math.floor(Date.now() / 1000) +
+      now +
       (tokenType === "access-token"
         ? fifteenMinInSec // access token
         : thirtyDaysInSec), // refresh token
-    iat: 123, //TODO
-    nbf: 123, //TODO
+    iat: now, // issued at
+    nbf: now, // not before (token is invalid before this time)
     role: "admin", //TODO: think about the roles (admin, logged-in, guest)
     iss: "auth-service",
     sub: userId,
   };
+  console.log("tokenType:", tokenType);
+  console.log("payload:", payload);
   const privateKey = fs.readFileSync(
     process.env.JWT_PRIVATE_KEY_PATH!,
     "utf-8"
@@ -61,20 +72,27 @@ app.post("/register", zValidator("json", registerSchema), async (c) => {
   // sync call to user service
   // TODO: change to kafka for async
   // TODO: add response schema
-  const response: any = await fetch("http://localhost:3001/register", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ username, password }),
-  });
-
-  if (!response.ok) {
-    return c.text("Error contacting user service", 500);
-  }
+  console.log("user service base url:", process.env.USER_SERVICE_BASE_URL);
+  const response: any = await fetch(
+    `${process.env.USER_SERVICE_BASE_URL!}/register`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ username, password }),
+    }
+  );
 
   const responseBody = await response.json();
   console.log("response:", responseBody);
+
+  if (!response.ok) {
+    return c.json(
+      { message: "Error contacting user service" },
+      response.status
+    );
+  }
 
   const accessToken = await createJWTToken(
     "access-token",
@@ -97,27 +115,90 @@ app.post("/register", zValidator("json", registerSchema), async (c) => {
   });
 
   return c.json({
-    msg: "User registered successfully!",
+    message: "User registered successfully!",
     accessToken,
   });
 });
 
-app.get("/login", async (c) => {
-  const tokenToVerify = c.req.header("Authorization")?.split(" ")[1]!;
+app.get("/refresh", async (c) => {
+  const refreshToken = getCookie(c, "refreshToken");
   const publicKey = fs.readFileSync(process.env.JWT_PUBLIC_KEY_PATH!, "utf-8"); // format public key
 
   const alg: JWTAlg = process.env.JWT_ALG as JWTAlg;
-  const decodedPayload = await verify(tokenToVerify, publicKey, alg);
+  const decodedPayload = (await verify(
+    refreshToken!,
+    publicKey,
+    alg
+  )) as UserPayload;
   customLogger("user id:", `${decodedPayload["sub"]}`); // get user id
-  return c.json(decodedPayload);
+
+  const accessToken = await createJWTToken(
+    "access-token",
+    decodedPayload["username"]!,
+    decodedPayload["password"]!,
+    decodedPayload["sub"]!
+  );
+
+  return c.json({ accessToken });
+});
+
+app.post("/login", zValidator("json", registerSchema), async (c) => {
+  const validatedData = c.req.valid("json");
+  const { username, password } = validatedData;
+  // sync call to user service
+  // TODO: change to kafka for async
+  // TODO: add response schema
+  console.log("user service base url:", process.env.USER_SERVICE_BASE_URL);
+  const response: any = await fetch(
+    `${process.env.USER_SERVICE_BASE_URL!}/login`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ username, password }),
+    }
+  );
+
+  const responseBody = await response.json();
+  console.log("response:", responseBody);
+
+  if (!response.ok) {
+    return c.text(responseBody.message, response.status);
+  }
+
+  const accessToken = await createJWTToken(
+    "access-token",
+    username,
+    password,
+    responseBody?.userId
+  );
+
+  const refreshToken = await createJWTToken(
+    "refresh-token",
+    username,
+    password,
+    responseBody?.userId
+  );
+
+  setCookie(c, "refreshToken", refreshToken, {
+    httpOnly: true,
+    sameSite: "strict",
+    secure: true,
+  });
+
+  return c.json({
+    message: "User logged in successfully!",
+    accessToken,
+  });
 });
 
 app.get("/", (c) => {
   return c.text("Hello auth service!");
 });
 
-const port = 3000;
-console.log(`Server is running on port http://localhost:${port}`);
+const port = 3001;
+console.log(`Auth service is running on port http://localhost:${port}`);
 
 serve({
   fetch: app.fetch,

@@ -93,11 +93,11 @@ app.post("/create-bucket", zValidator("json", registerSchema), async (c) => {
 });
 
 app.get("/", (c) => {
-  return c.text("Hello Hono!");
+  return c.text("Hello Bucket Service!");
 });
 
 const port = 3002;
-console.log(`Server is running on port http://localhost:${port}`);
+console.log(`Bucket service is running on port http://localhost:${port}`);
 
 serve({
   fetch: app.fetch,

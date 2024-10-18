@@ -1,4 +1,24 @@
 ﻿services:
+  # auth, user, and web services
+  # app:
+  #   container_name: app
+  #   build:
+  #     context: .
+  #   ports:
+  #     - "3000:3000"
+  #     - "3001:3001"
+  #     - "3002:3002"
+  #   env_file:
+  #     - ./apps/.env
+  #     - ./packages/auth/.env
+  #     - ./packages/user/.env
+  #   depends_on:
+  #     - bucket_service
+  #     - gpt-sovits-inference_service
+  #     - gpt-audio_service
+  #     - musetalk_service
+  #     - liveportrait_service
+  #     - real3dportrait_service
   bucket_service:
     container_name: bucket_service
     build:

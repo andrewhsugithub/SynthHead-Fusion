@@ -4,6 +4,8 @@
 
    ```bash
    git clone git@github.com:andrewhsugithub/SynthHead-Fusion.git --recursive
+   git submodule update --recursive
+   pnpm i
    ```
 
 2. copy env files
@@ -15,7 +17,16 @@
 
    Enter the env values
 
-3. copy env and paste your pubic key(.pem file) into keys folder for each microservice
+3. update user db
+
+   ```bash
+   cd packages/user
+   docker compose up
+   pnpm user:db
+   docker compose down
+   ```
+
+4. copy env and paste your pubic key(.pem file) into keys folder for each microservice
 
    - auth service
 
@@ -71,11 +82,11 @@
 
    Enter the env values
 
-4. spin up servers
+5. spin up servers
 
    ```bash
    docker compose up
-   pnpm dev
+   pnpm dev:remote
    ```
 
 > Note: all env values can be found in discord
