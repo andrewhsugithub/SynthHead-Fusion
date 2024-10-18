@@ -10,6 +10,7 @@ import { AxiosProgressEvent } from "axios";
 import { Progress } from "../ui/progress";
 import { ModalType, useModalStore } from "@/stores/modalStore";
 import { Icon } from "@iconify/react";
+import { set } from "zod";
 
 const getImgURL = (file: File) => URL.createObjectURL(file);
 
@@ -74,6 +75,11 @@ const ImageForm = ({ emotion, className }: ImageFormProps) => {
     }
   };
 
+  const unselectImage = () => {
+    setImg(null);
+    setUploadPercentage(0);
+  };
+
   const handleSubmit = async () => {
     if (!img) return;
 
@@ -103,7 +109,7 @@ const ImageForm = ({ emotion, className }: ImageFormProps) => {
             <ImageThumbnail
               img={img}
               emotion={emotion}
-              unselectImage={() => setImg(null)}
+              unselectImage={unselectImage}
             />
           </Label>
           <Input
