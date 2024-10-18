@@ -61,6 +61,11 @@ const VideoForm = ({ className }: VideoFormProps) => {
     }
   }, [isActive]);
 
+  const unselectVideo = () => {
+    setVideo(null);
+    setUploadPercentage(0);
+  };
+
   const handleVideoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -93,7 +98,7 @@ const VideoForm = ({ className }: VideoFormProps) => {
       <div className={cn("p-4 flex justify-center items-center", className)}>
         <div className=" bg-slate-200 w-[400px] h-[400px] rounded-md border-dotted border-2 border-black">
           <Label htmlFor="video" className="hover:cursor-pointer">
-            <VideoPreview video={video} unselectVideo={() => setVideo(null)} />
+            <VideoPreview video={video} unselectVideo={unselectVideo} />
           </Label>
           <Input
             id="video" //TODO: rename
