@@ -2,21 +2,12 @@
 
 import React from "react";
 import { Button } from "../ui/button";
-import { Label } from "../ui/label";
-import { Input } from "../ui/input";
 import Modal from "../ui/modal";
 import { Icon } from "@iconify/react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ImageCard from "../Cards/ImageCard";
 import VideoCard from "../Cards/VideoCard";
+import AudioCard from "../Cards/AudioCard";
 
 interface AvatarSettingsModalProps {
   isOpen: boolean;
@@ -38,27 +29,7 @@ const AvatarSettingsModal = ({ isOpen, onClose }: AvatarSettingsModalProps) => {
           {/* <EmotionSelector /> */}
         </TabsContent>
         <TabsContent value="audios">
-          <Card>
-            <CardHeader>
-              <CardTitle>Password</CardTitle>
-              <CardDescription>
-                Change your password here. After saving, you'll be logged out.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              <div className="space-y-1">
-                <Label htmlFor="current">Current password</Label>
-                <Input id="current" type="password" />
-              </div>
-              <div className="space-y-1">
-                <Label htmlFor="new">New password</Label>
-                <Input id="new" type="password" />
-              </div>
-            </CardContent>
-            <CardFooter>
-              <Button>Save password</Button>
-            </CardFooter>
-          </Card>
+          <AudioCard />
         </TabsContent>
         <TabsContent value="videos">
           <VideoCard />
