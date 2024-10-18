@@ -1,0 +1,25 @@
+﻿# Use an official lightweight image
+FROM alpine:latest
+
+# Install SSH client and sshpass
+RUN apk --no-cache add openssh-client sshpass
+
+# Create a non-root user
+RUN adduser -D synthheadUser
+
+# Create .ssh directory with the correct permissions for the new user
+RUN mkdir -p -m 0700 /home/synthheadUser/.ssh
+
+# Copy the script into the container
+COPY bucket.sh /home/synthheadUser/bucket.sh
+
+# Make the script executable
+RUN chmod +x /home/synthheadUser/bucket.sh
+
+# Change ownership of the script and .ssh directory to the non-root user
+RUN chown -R synthheadUser:synthheadUser /home/synthheadUser
+
+# Switch to the non-root user
+USER synthheadUser
+
+CMD ["sh", "/home/synthheadUser/bucket.sh"]

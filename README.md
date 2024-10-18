@@ -2,18 +2,146 @@
 
 1. git clone
 
-```bash
-git clone git@github.com:andrewhsugithub/SynthHead-Fusion.git --recursive
-```
+   ```bash
+   git clone git@github.com:andrewhsugithub/SynthHead-Fusion.git --recursive
+   git submodule update --recursive
+   pnpm i
+   ```
 
 2. copy env files
 
+   ```bash
+   cp ./scripts/.env.sh.template ./scripts/.env.sh
+   cp ./scripts/services/.env.server ./scripts/services/.env.server
+   ```
+
+   Enter the env values
+
+3. update user db
+
+   ```bash
+   cd packages/user
+   docker compose up
+   pnpm user:db
+   docker compose down
+   ```
+
+4. copy env and paste your pubic key(.pem file) into keys folder for each microservice
+
+   - auth service
+
+   ```bash
+   cd packages/auth/
+   cp .env.template .env
+   ```
+
+   - bucket service
+
+   ```bash
+   cd packages/bucket/
+   cp .env.template .env
+   cp .env.server.template .env.server
+   ```
+
+   - GPT-Audio
+
+   ```bash
+   cd packages/GPT-Audio/
+   cp .env.template .env
+   cp .env.server.template .env.server
+   ```
+
+   - GPT-SoVITS-Inference
+
+   ```bash
+   cd packages/GPT-SoVITS-Inference/
+   cp .env.server.template .env.server
+   ```
+
+   - LivePortrait
+
+   ```bash
+   cd packages/LivePortrait/
+   cp .env.server.template .env.server
+   ```
+
+   - MuseTalk
+
+   ```bash
+   cd packages/MuseTalk/
+   cp .env.template .env
+   cp .env.server.template .env.server
+   ```
+
+   - Real3DPortrait
+
+   ```bash
+   cd packages/Real3DPortrait/
+   cp .env.server.template .env.server
+   ```
+
+   Enter the env values
+
+5. spin up servers
+
+   ```bash
+   docker compose up
+   pnpm dev:remote
+   ```
+
+> Note: all env values can be found in discord
+
+## Spinning up the servers for each microservice
+
+Run each service in an independent shell.
+
+1. GPT-SoVITS-Inference
+
 ```bash
-cp ./scripts/.env.sh.template ./scripts/.env.sh
-cp ./scripts/.env.server.sh.template ./scripts/.env.server.sh
+bash ./scripts/services/GPT-SoVITS-Inference.sh
 ```
 
-Enter the env values
+Port: 5000
+
+2. GPT-Audio (depends on GPT-SoVITS-Inference)
+
+```bash
+bash ./scripts/services/GPT-Audio.sh
+```
+
+Port: 7998
+
+3. MuseTalk
+
+```bash
+bash ./scripts/services/MuseTalk.sh
+```
+
+Port:7999
+
+4. Real3DPortrait
+
+```bash
+bash ./scripts/services/Real3DPortrait.sh
+```
+
+Port: 8001
+
+5. LivePortrait
+
+```bash
+bash ./scripts/services/LivePortrait.sh
+```
+
+Port: 8000
+
+6. Bucket
+
+```bash
+bash ./scripts/services/bucket.sh
+```
+
+Port: 3002
 
 # Adding submodules
 
@@ -118,6 +246,7 @@ bash ./scripts/run_all.sh
 
 ## TODO
 
+- [ ] add logger, openapi, docs to every service
 - [ ] add Read3D-Interface into submodule
 - [ ] add videoCutting into submodule
 - [ ] turn into web app

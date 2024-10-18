@@ -1,10 +1,20 @@
 {
-  "name": "ml",
+  "name": "@synthhead-fusion/root",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "musetalk:db": "pnpm -F @synthhead-fusion/musetalk musetalk:db",
+    "user:db": "pnpm -F @synthhead-fusion/user user:db",
+    "auth:start": "pnpm -F @synthhead-fusion/auth auth:start",
+    "user:start": "pnpm -F @synthhead-fusion/user user:start",
+    "bucket:start": "pnpm -F @synthhead-fusion/bucket bucket:start",
+    "app:start": "pnpm -F @synthhead-fusion/app web:start",
+    "dev:local": "pnpm auth:start & pnpm user:start & pnpm bucket:start & pnpm app:start & pnpm user:db",
+    "dev:remote": "pnpm auth:start & pnpm user:start & pnpm app:start",
+    "dev:remote:windows": "start pnpm auth:start && start pnpm user:start && start pnpm app:start",
+    "start": "pnpm -r start"
   },
   "keywords": [],
   "author": "",

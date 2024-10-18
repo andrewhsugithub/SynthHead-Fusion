@@ -1,6 +1,7 @@
-﻿# scripts/sync_repo.sh
+﻿node_modules/
+
 scripts/.env.sh
-scripts/.env.server.sh
+scripts/services/.env.server.sh
 
 # Temporary ignoring repos not added to submodules
 Real-ESRGAN/
@@ -9,3 +10,6 @@ Read3D-Interface/
 # Probably never going to use it
 GPT-SoVITS/
 GeneFacePlusPlus/
+
+# Ignoring the buckets folder
+buckets/
