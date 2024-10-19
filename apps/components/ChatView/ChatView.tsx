@@ -10,9 +10,7 @@ const ChatView = () => {
         <h1>{GLOBAL_TITLE}</h1>
         <AvatarButton />
       </div>
-      <div className="flex-1">
-        <ChatBox />
-      </div>
+      <ChatBox />
     </main>
   );
 };

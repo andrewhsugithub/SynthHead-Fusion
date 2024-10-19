@@ -6,7 +6,7 @@ import ChatCard from "../ChatCard";
 
 const Sidebar = () => {
   return (
-    <main className="p-2 bg-slate-50 w-[260px] h-screen flex flex-col">
+    <main className="p-2 bg-slate-50 w-[260px] h-dvh flex flex-col">
       <div className="px-2 flex flex-row justify-between items-center">
         <div className="rounded-lg text-xl hover:bg-gray-200 p-2 hover:cursor-pointer">
           <Icon icon="akar-icons:panel-left" />
