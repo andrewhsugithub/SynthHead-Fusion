@@ -1,6 +1,7 @@
 ﻿"use client";
 
 import { ModalType, useModalStore } from "@/stores/modalStore";
+import { protectedAxios } from "@/utils/protectedAxios";
 import { Icon } from "@iconify/react";
 import React from "react";
 
@@ -28,24 +29,34 @@ const ChatInput = ({ addMessage }: ChatInputProps) => {
     updateActiveModal(ModalType.AVATAR);
   };
 
-  const handleEnterPress = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      const message = getFormatMessage();
-      if (message.trim() === "") return;
+  const handleSubmitMessage = async () => {
+    const message = getFormatMessage();
+    if (message.trim() === "") return;
+    let respond;
+    try {
       addMessage(message);
+      respond = await protectedAxios.post("/add_message", {
+        question: message,
+      });
+      addMessage(`responded: ${respond?.data}`);
       resetInput();
+    } catch (e) {
+      console.error(e);
     }
   };
 
-  const handleInputClick = (
+  const handleEnterPress = async (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      await handleSubmitMessage();
+    }
+  };
+
+  const handleInputClick = async (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
     e.preventDefault();
-    const message = getFormatMessage();
-    if (message.trim() === "") return;
-    addMessage(message);
-    resetInput();
+    await handleSubmitMessage();
   };
 
   return (

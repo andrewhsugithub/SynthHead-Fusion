@@ -11,7 +11,6 @@ const ChatDialog = () => {
   );
 
   const addMessages = (message: string) => {
-    console.log("message", message);
     setMessages((prev) => [...prev, message]);
   };
 
