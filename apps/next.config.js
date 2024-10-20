@@ -12,12 +12,12 @@ const nextConfig = {
         destination: `${process.env.BUCKET_SERVICE_BASE_URL}/auth/upload/:path*`,
       },
       {
-        source: "/api/:path*",
-        destination: `${process.env.USER_SERVICE_BASE_URL}/:path*`,
+        source: "/api/add_message",
+        destination: `${process.env.GPT_AUDIO_SERVICE_BASE_URL}/GPTAudio`,
       },
       {
         source: "/api/:path*",
-        destination: `${process.env.GPT_AUDIO_SERVICE_BASE_URL}/:path*`,
+        destination: `${process.env.USER_SERVICE_BASE_URL}/:path*`,
       },
       {
         source: "/api/:path*",
