@@ -17,7 +17,7 @@ def process_image(param1: str, param2: str): # 接受兩個參數，分別代表
         set_key(dotenv_path, "INPUT_DIR", param1)
         set_key(dotenv_path, "OUTPUT_DIR", param2)
 
-        # subprocess.run(["chmod", "+x", "./process_img.sh"], check=True)
+        subprocess.run(["chmod", "+x", "./process_img.sh"], check=True)
 
         # 阻塞地執行 process_img.sh 並傳入參數
         result = subprocess.run(
