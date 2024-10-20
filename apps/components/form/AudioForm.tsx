@@ -75,9 +75,16 @@ const AudioForm = ({ emotion, className }: AudioFormProps) => {
 
   const handleSubmit = async () => {
     if (!audio) return;
+    const fileType = audio.type.split("/");
+
+    const newAudio = new File([audio], `${emotion}.${fileType[1]}`, {
+      type: audio.type,
+    });
+    console.log(fileType[1]);
+    console.log(newAudio.name);
 
     const formData = new FormData();
-    formData.append("uploadedFile", audio);
+    formData.append("uploadedFile", newAudio);
     formData.append("emotion", emotion);
 
     await protectedAxios
