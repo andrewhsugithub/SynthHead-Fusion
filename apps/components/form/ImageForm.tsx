@@ -82,9 +82,15 @@ const ImageForm = ({ emotion, className }: ImageFormProps) => {
 
   const handleSubmit = async () => {
     if (!img) return;
+    const fileType = img.type.split("/");
+
+    const newImg = new File([img], `${emotion}.${fileType[1]}`, {
+      type: img.type,
+    });
+    console.log(fileType[1]);
 
     const formData = new FormData();
-    formData.append("uploadedFile", img);
+    formData.append("uploadedFile", newImg);
     formData.append("emotion", emotion);
 
     await protectedAxios
