@@ -2,22 +2,16 @@
 
 import React, { useEffect } from "react";
 import useChatStore from "@/stores/chat";
-import { Button } from "../ui/button";
 import useUserStore from "@/stores/userStore";
-import { Icon } from "@iconify/react";
 import { ModalType, useModalStore } from "@/stores/modalStore";
 import OnboardModal from "../Modals/OnboardModal";
 import AvatarSettingsModal from "../Modals/AvatarSettingsModal";
+import ChatDialog from "./ChatDialog";
 
 const ChatBox = () => {
-  const [counter, setCounter] = React.useState(0);
   const hasUserLogin = useUserStore((state) => state.hasUserLogin);
   const { chatId, hasCreatedTarget, onCreateTarget } = useChatStore();
   const { activeModal, updateActiveModal } = useModalStore();
-
-  const handleSettingsClick = () => {
-    updateActiveModal(ModalType.AVATAR);
-  };
 
   // when creating a new chat, check if user is logged in
   useEffect(() => {
@@ -33,22 +27,7 @@ const ChatBox = () => {
   }, [hasCreatedTarget, hasUserLogin]);
 
   return (
-    <div>
-      {hasCreatedTarget ? (
-        <div className="flex justify-center items-center gap-x-2">
-          <p className="text-center">title:{counter + chatId}</p>
-          <div
-            className="rounded-lg text-xl hover:bg-gray-200 p-2 hover:cursor-pointer"
-            onClick={handleSettingsClick}
-          >
-            <Icon icon="material-symbols:settings-outline" />
-          </div>
-          <Button onClick={() => setCounter(counter + 1)}>+1</Button>
-        </div>
-      ) : (
-        <Button onClick={onCreateTarget}>Create Target</Button>
-      )}
-
+    <>
       <OnboardModal
         isOpen={activeModal === ModalType.USER}
         onClose={() => updateActiveModal(null)}
@@ -57,7 +36,8 @@ const ChatBox = () => {
         isOpen={activeModal === ModalType.AVATAR}
         onClose={() => updateActiveModal(null)}
       />
-    </div>
+      <ChatDialog />
+    </>
   );
 };
 
