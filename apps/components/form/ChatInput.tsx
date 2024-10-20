@@ -50,7 +50,10 @@ const ChatInput = ({ addMessage }: ChatInputProps) => {
 
   return (
     <form className="relative">
-      <button className="absolute start-0 bottom-1.5 flex items-center ps-2">
+      <button
+        type="button"
+        className="absolute start-0 bottom-1.5 flex items-center ps-2"
+      >
         <div
           className="rounded-lg text-xl p-2 z-50 hover:bg-gray-200  hover:cursor-pointer"
           onClick={handleSettingsClick}

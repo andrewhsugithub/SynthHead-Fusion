@@ -28,6 +28,7 @@ const ChatMessages = ({ messages }: ChatMessagesProps) => {
             className={`max-w-[80%] flex rounded-lg p-2 text-sm ${
               index % 2 ? "bg-slate-200" : "self-end bg-blue-200"
             }`}
+            key={index + message}
           >
             Lorem ipsum dolor sit amet consectetur adipisicing elit. Earum
             dignissimos autem atque numquam praesentium qui? Excepturi deleniti
