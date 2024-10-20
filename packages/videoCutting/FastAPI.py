@@ -33,4 +33,4 @@ def process_image(param1: str, param2: str): # 接受兩個參數，分別代表
 # 啟動伺服器的部分
 if __name__ == "__main__":
     # 直接啟動 uvicorn
-    uvicorn.run("FastAPI:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("FastAPI:app", host="0.0.0.0", port=3000, reload=True)
