@@ -5,11 +5,7 @@ import ChatMessages from "./ChatMessages";
 import ChatInput from "../form/ChatInput";
 
 const ChatDialog = () => {
-  const testArray = Array.from({ length: 100 }, (_, i) => i + 1);
-  const [messages, setMessages] = React.useState<string[]>(
-    // testArray.map((i) => `Message ${i}`)
-    []
-  );
+  const [messages, setMessages] = React.useState<string[]>([]);
 
   const addMessages = (message: string) => {
     setMessages((prev) => [...prev, message]);
