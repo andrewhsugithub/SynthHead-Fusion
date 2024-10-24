@@ -3,7 +3,10 @@
 import { ModalType, useModalStore } from "@/stores/modalStore";
 import { protectedAxios } from "@/utils/protectedAxios";
 import { Icon } from "@iconify/react";
+import { AxiosProgressEvent } from "axios";
 import React from "react";
+import { Progress } from "../ui/progress";
+import { set } from "zod";
 
 interface ChatInputProps {
   addMessage: (message: string) => void;
@@ -11,6 +14,7 @@ interface ChatInputProps {
 
 const ChatInput = ({ addMessage }: ChatInputProps) => {
   const inputRef = React.useRef<HTMLDivElement>(null);
+  const [loadingPercentage, setLoadingPercentage] = React.useState(0);
   const updateActiveModal = useModalStore((state) => state.updateActiveModal);
 
   const resetInput = () => {
@@ -35,10 +39,27 @@ const ChatInput = ({ addMessage }: ChatInputProps) => {
     let respond;
     try {
       addMessage(message);
-      respond = await protectedAxios.post("/add_message", {
-        question: message,
-      });
-      addMessage(`responded: ${respond?.data}`);
+      respond = await protectedAxios
+        .post(
+          "/add_message",
+          { question: message },
+          {
+            onUploadProgress: (progressEvent: AxiosProgressEvent) => {
+              setLoadingPercentage(
+                Math.round((progressEvent.loaded / progressEvent.total!) * 100)
+              );
+            },
+          }
+        )
+        .catch((e) => {
+          console.error(e);
+          setLoadingPercentage(0);
+          addMessage("Error sending message");
+        });
+      console.log("respond: ", respond?.data);
+      console.log("respond to string: ", JSON.stringify(respond?.data));
+      addMessage(`${JSON.stringify(respond?.data)}`);
+      setLoadingPercentage(0);
       resetInput();
     } catch (e) {
       console.error(e);
@@ -66,7 +87,11 @@ const ChatInput = ({ addMessage }: ChatInputProps) => {
         className="absolute start-0 bottom-1.5 flex items-center ps-2"
       >
         <div
-          className="rounded-lg text-xl p-2 z-50 hover:bg-gray-200  hover:cursor-pointer"
+          className={`rounded-lg text-xl p-2 z-50 hover:bg-gray-200  hover:cursor-pointer ${
+            loadingPercentage > 0
+              ? "disabled:opacity-50 pointer-events-none"
+              : ""
+          }`}
           onClick={handleSettingsClick}
         >
           <Icon icon="material-symbols:settings-outline" />
@@ -79,11 +104,13 @@ const ChatInput = ({ addMessage }: ChatInputProps) => {
         data-placeholder="Message SynthHead Fusion"
         ref={inputRef}
       ></div>
+      <Progress className="-my-1" value={loadingPercentage} />
       <div className="absolute end-1.5 bottom-1.5 flex items-center pe-2">
         <button
           type="submit"
-          className="rounded-lg text-xl p-2 z-50 hover:bg-gray-200  hover:cursor-pointer"
+          className="rounded-lg text-xl p-2 z-50 hover:bg-gray-200  hover:cursor-pointer disabled:opacity-50"
           onClick={handleInputClick}
+          disabled={loadingPercentage > 0}
         >
           <Icon icon="icon-park-solid:up-c" />
         </button>

@@ -1,5 +1,7 @@
 ﻿import React from "react";
 import { ScrollArea } from "../ui/scroll-area";
+import UserQuestions from "./UserQuestions";
+import RespondMessages from "./RespondMessages";
 
 interface ChatMessagesProps {
   messages: string[];
@@ -23,19 +25,13 @@ const ChatMessages = ({ messages }: ChatMessagesProps) => {
   return (
     <ScrollArea className="flex-1 p-5">
       <div className="flex flex-col gap-y-3" ref={scrollRef}>
-        {messages.map((message, index) => (
-          <p
-            className={`max-w-[80%] flex rounded-lg p-2 text-sm ${
-              index % 2 ? "bg-slate-200" : "self-end bg-blue-200"
-            }`}
-            key={index + message}
-          >
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Earum
-            dignissimos autem atque numquam praesentium qui? Excepturi deleniti
-            odio quos molestiae soluta reiciendis eaque quam ipsum aut corporis!
-            Asperiores, repudiandae quibusdam. {message}
-          </p>
-        ))}
+        {messages.map((message, index) =>
+          index % 2 ? (
+            <RespondMessages message={message} key={index + message} />
+          ) : (
+            <UserQuestions message={message} key={index + message} />
+          )
+        )}
       </div>
     </ScrollArea>
   );
