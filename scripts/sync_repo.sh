@@ -14,12 +14,13 @@ ssh -tt $USER@$MAIN_SERVER << EOF
     git fetch origin
 
     # Reset the local repository to the latest HEAD
-    echo "Resetting repository to HEAD"
-    git reset --hard HEAD
+    echo "Resetting repository to latest remote HEAD"
+    git reset --hard origin/$BRANCH_NAME
 
-    # # Remove all untracked files and directories
-    # echo "Removing untracked files and directories"
-    # git clean -f -d
+    # Remove all untracked files and directories
+    echo "Removing untracked files and directories"
+    git clean
+    git clean -f -d
 
     # Pull the latest changes from the remote repository
     echo "Pulling latest changes"
