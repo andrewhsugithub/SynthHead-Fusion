@@ -17,6 +17,10 @@ ssh -tt $USER@$MAIN_SERVER << EOF
     echo "Removing untracked files and directories"
     git clean -f -d
 
+    # Switch to the desired branch
+    echo "Switching to branch: $BRANCH_NAME"
+    git switch $BRANCH_NAME
+
     # Pull the latest changes from the remote repository
     echo "Pulling latest changes"
     git pull --rebase
@@ -24,10 +28,6 @@ ssh -tt $USER@$MAIN_SERVER << EOF
     # Update submodules
     echo "Update submodules"
     git submodule update --init --recursive --force
-
-    # Switch to the desired branch
-    echo "Switching to branch: $BRANCH_NAME"
-    git switch $BRANCH_NAME
 
     # Install correct node version specified in .nvmrc
     echo "Installing correct node version"
