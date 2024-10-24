@@ -1,6 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  experimental: {
+    proxyTimeout: 1000 * 60 * 5, // 5 minutes in milliseconds
+  },
   async rewrites() {
     return [
       {

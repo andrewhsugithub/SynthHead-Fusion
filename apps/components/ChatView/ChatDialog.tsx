@@ -7,7 +7,8 @@ import ChatInput from "../form/ChatInput";
 const ChatDialog = () => {
   const testArray = Array.from({ length: 100 }, (_, i) => i + 1);
   const [messages, setMessages] = React.useState<string[]>(
-    testArray.map((i) => `Message ${i}`)
+    // testArray.map((i) => `Message ${i}`)
+    []
   );
 
   const addMessages = (message: string) => {
