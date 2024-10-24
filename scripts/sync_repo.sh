@@ -19,7 +19,7 @@ ssh -tt $USER@$MAIN_SERVER << EOF
 
     # Remove all untracked files and directories
     echo "Removing untracked files and directories"
-    git clean
+    git clean -n -d
     git clean -f -d
 
     # Pull the latest changes from the remote repository
