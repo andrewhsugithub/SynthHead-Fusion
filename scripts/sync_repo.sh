@@ -27,7 +27,7 @@ ssh -tt $USER@$MAIN_SERVER << EOF
 
     # Pull the latest changes from the remote repository
     echo "Pulling latest changes"
-    git pull
+    git pull --rebase
 
     # Update submodules
     echo "Update submodules"
