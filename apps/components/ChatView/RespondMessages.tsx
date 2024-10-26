@@ -1,21 +1,46 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { protectedAxios } from "@/utils/protectedAxios";
 
 interface RespondMessagesProps {
   message: string;
   key: string;
 }
+
+const Audio = ({ audioPath }: { audioPath: string }) => {
+  const [audioUrl, setAudioUrl] = React.useState<string>("");
+
+  const getAudio = async () => {
+    try {
+      const response = await protectedAxios.get(`/poll`, {
+        responseType: "blob",
+        params: {
+          filePath: audioPath,
+        },
+      });
+      const audioUrl = URL.createObjectURL(response.data);
+      setAudioUrl(audioUrl);
+    } catch (error) {
+      console.error("Error fetching audio:", error);
+    }
+  };
+
+  useEffect(() => {
+    getAudio();
+
+    return () => {
+      if (audioUrl) {
+        URL.revokeObjectURL(audioUrl);
+      }
+    };
+  }, []);
+
+  return <audio src={audioUrl} controls />;
+};
 
 const RespondMessages = ({ message, key }: RespondMessagesProps) => {
   //! should parse the message in elsewhere not here
@@ -25,11 +50,9 @@ const RespondMessages = ({ message, key }: RespondMessagesProps) => {
     ""
   );
 
-  // TODO: Stream audios, now we just temporarily show the audio paths
-  const audio = respond.reduce(
-    (acc: string, message: any) =>
-      acc + (acc ? "\n" : "") + message.audio_file_path,
-    ""
+  const audioPathArray = respond.reduce(
+    (acc: string[], message: any) => [...acc, message.audio_file_path],
+    []
   );
 
   return (
@@ -65,7 +88,9 @@ const RespondMessages = ({ message, key }: RespondMessagesProps) => {
               <h1 className="text-lg font-semibold uppercase">Transcript</h1>
               <p className={`text-sm`}>{respond_messages}</p>
               <h1 className="text-lg font-semibold uppercase">Audio</h1>
-              <p className={`text-sm`}>{audio}</p>
+              {audioPathArray?.map((audioPath: string) => (
+                <Audio audioPath={audioPath} />
+              ))}
             </CardContent>
           </Card>
         </TabsContent>

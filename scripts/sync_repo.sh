@@ -9,6 +9,9 @@ ssh -tt $USER@$MAIN_SERVER << EOF
     # cd into the repository
     cd $CWD
 
+    git restore --staged .
+    git restore .
+
     # Fetch the latest changes from the remote repository
     echo "Fetching latest changes from remote"
     git fetch origin
