@@ -9,27 +9,48 @@ import { z } from "zod";
 import { zValidator } from "@hono/zod-validator";
 import { jwt } from "hono/jwt";
 import type { JwtVariables } from "hono/jwt";
+import { stream } from "hono/streaming";
 
 // Specify the variable types to infer the `c.get('jwtPayload')`:
 type Variables = JwtVariables;
 
 const app = new Hono<{ Variables: Variables }>();
 
-app.use(
-  "/auth/*",
-  jwt({
-    secret: await readFile(process.env.JWT_PUBLIC_KEY_PATH!, "utf-8"),
-    alg: process.env.JWT_ALG as JWTAlg,
-  })
-);
-
 app.use(logger());
+
+const jwtMiddleware = jwt({
+  secret: await readFile(process.env.JWT_PUBLIC_KEY_PATH!, "utf-8"),
+  alg: process.env.JWT_ALG as JWTAlg,
+});
+
+app.use("/auth/*", jwtMiddleware);
+app.use("/poll/*", jwtMiddleware);
 
 //TODO: add middleware to see 1. if user has access to the bucket 2. if the file exists 3. if the file is public (output/videos only)
 app.use(
   `/${process.env.BUCKET_DIR_NAME}/*`,
+  jwtMiddleware,
   serveStatic({ root: process.env.BUCKET_RELATIVE_PATH })
 );
+
+app.get("/poll", (c) => {
+  const filePath = c.req.query("filePath");
+
+  if (!filePath) {
+    return c.text("File path is required!");
+  }
+
+  if (!fs.existsSync(filePath)) {
+    return c.json({ status: "pending", message: "File is not yet available." });
+  }
+
+  const relativeFilePath = filePath.split("/").slice(-3).join("/");
+
+  // TODO: try streaming instead of reading the whole file
+  return c.redirect(
+    `/${process.env.BUCKET_DIR_NAME}/${encodeURIComponent(relativeFilePath)}`
+  );
+});
 
 const ACCEPTED_VIDEO_FILE_TYPES = ["video/mp4", "video/webm"];
 const ACCEPTED_AUDIO_FILE_TYPES = ["audio/mpeg", "audio/wav", "audio/mp3"];

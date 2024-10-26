@@ -15,6 +15,14 @@ const nextConfig = {
         destination: `${process.env.BUCKET_SERVICE_BASE_URL}/auth/upload/:path*`,
       },
       {
+        source: "/api/poll/:path*",
+        destination: `${process.env.BUCKET_SERVICE_BASE_URL}/poll/:path*`,
+      },
+      {
+        source: "/buckets/:path*",
+        destination: `${process.env.BUCKET_SERVICE_BASE_URL}/buckets/:path*`,
+      },
+      {
         source: "/api/add_message",
         destination: `${process.env.GPT_AUDIO_SERVICE_BASE_URL}/GPTAudio`,
       },
