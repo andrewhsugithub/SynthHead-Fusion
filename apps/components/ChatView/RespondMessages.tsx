@@ -42,6 +42,38 @@ const Audio = ({ audioPath }: { audioPath: string }) => {
   return <audio src={audioUrl} controls />;
 };
 
+const Video = ({ videoPath }: { videoPath: string }) => {
+  const [videoUrl, setVideoUrl] = React.useState<string>("");
+  console.log("videoPath: ", videoPath);
+
+  const getVideo = async () => {
+    try {
+      const response = await protectedAxios.get(`/poll`, {
+        responseType: "blob",
+        params: {
+          filePath: videoPath,
+        },
+      });
+      const videoUrl = URL.createObjectURL(response.data);
+      setVideoUrl(videoUrl);
+    } catch (error) {
+      console.error("Error fetching video:", error);
+    }
+  };
+
+  useEffect(() => {
+    getVideo();
+
+    return () => {
+      if (videoUrl) {
+        URL.revokeObjectURL(videoUrl);
+      }
+    };
+  }, []);
+
+  return <video src={videoUrl} controls />;
+};
+
 const RespondMessages = ({ message, key }: RespondMessagesProps) => {
   //! should parse the message in elsewhere not here
   const respond = JSON.parse(message);
@@ -53,6 +85,10 @@ const RespondMessages = ({ message, key }: RespondMessagesProps) => {
   const audioPathArray = respond.reduce(
     (acc: string[], message: any) => [...acc, message.audio_file_path],
     []
+  );
+
+  const videoPathArray = audioPathArray.map((audioPath: string) =>
+    audioPath.replace("audio", "Real3D").replace(".mp3", ".mp4")
   );
 
   return (
@@ -68,18 +104,10 @@ const RespondMessages = ({ message, key }: RespondMessagesProps) => {
         <TabsContent value="talking_head">
           <Card>
             <CardContent className="space-y-2">
-              <div className="space-y-1">
-                <Label htmlFor="current">Current password</Label>
-                <Input id="current" type="password" />
-              </div>
-              <div className="space-y-1">
-                <Label htmlFor="new">New password</Label>
-                <Input id="new" type="password" />
-              </div>
+              {videoPathArray?.map((videoPath: string) => (
+                <Video videoPath={videoPath} />
+              ))}
             </CardContent>
-            <CardFooter>
-              <Button>Save password</Button>
-            </CardFooter>
           </Card>
         </TabsContent>
         <TabsContent value="response">
