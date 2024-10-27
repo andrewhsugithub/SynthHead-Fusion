@@ -71,5 +71,19 @@
     env_file: ./packages/user/.env
     volumes:
       - pgdata:/var/lib/postgresql/data
+  rabbitmq:
+    container_name: rabbitmq
+    build:
+      context: ./packages/GPT-Audio
+      dockerfile: Dockerfile.queue
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: user
+      RABBITMQ_DEFAULT_PASS: password
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
 volumes:
   pgdata:
+  rabbitmq_data:
