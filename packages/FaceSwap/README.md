@@ -1,6 +1,14 @@
 # FaceSwap
 Swap face between two photos for Python 3 with OpenCV and dlib.
 
+## 串接 Fastapi
+網址範例:
+http://127.0.0.1:3004/processimg/?src=imgs/drespress_out.jpg&dst=imgs/regular_out.jpg&out=results/output.jpg
+
+src: 來源圖片
+dst: 目標圖片
+out: 輸出圖片
+
 ## Get Started
 ```sh
 python main.py --src imgs/test6.jpg --dst imgs/test7.jpg --out results/output6_7.jpg --correct_color
