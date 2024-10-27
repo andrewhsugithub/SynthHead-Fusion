@@ -1,0 +1,15 @@
+# Base image for Python
+FROM python:3.9-slim
+
+# Set the working directory
+WORKDIR /app
+
+# Copy requirements file and install dependencies
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+
+# Copy the Python script to the working directory
+COPY . .
+
+# Run the Python RabbitMQ client script
+CMD ["python", "receive.py"]

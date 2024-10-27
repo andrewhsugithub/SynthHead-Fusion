@@ -71,11 +71,10 @@
     env_file: ./packages/user/.env
     volumes:
       - pgdata:/var/lib/postgresql/data
+
   rabbitmq:
+    image: rabbitmq:4.0-management
     container_name: rabbitmq
-    build:
-      context: ./packages/GPT-Audio
-      dockerfile: Dockerfile.queue
     ports:
       - "5672:5672"
       - "15672:15672"
@@ -84,6 +83,16 @@
       RABBITMQ_DEFAULT_PASS: password
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
+
+  receive_message-python-client:
+    build:
+      context: ./packages/message_broker
+      dockerfile: Dockerfile.message_broker
+    depends_on:
+      - rabbitmq
+    env_file:
+      - ./packages/message_broker/.env
+
 volumes:
   pgdata:
   rabbitmq_data:
