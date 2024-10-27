@@ -1,22 +1,17 @@
 import sys, os
 import pika
-from src.gpt_sovits_client import GPTSoVITSClient
+from gpt_sovits_client import GPTSoVITSClient
 from dotenv import load_dotenv
 import json
-
-load_dotenv(dotenv_path=".env", override=True)
-RABBITMQ_URL = os.getenv("RABBITMQ_URL")
-QUEUE_NAME = os.getenv("AUDIO_QUEUE")
-API_ENDPOINT = "http://your-api-endpoint.com"
-CHARACTER_NAME = os.getenv("CHARACTER_NAME")
-GPT_SOVITS_ENDPOINT = os.getenv("GPT_SOVITS_ENDPOINT")
+from functools import partial
 
 def save_audio_to_file(audio, file_path):
     with open(file_path, 'wb') as f:
         f.write(audio)
     print(f"Audio saved to {file_path}")
 
-def process_message(ch, method, properties, body):
+def process_message(ch, method, properties, body, GPT_SOVITS_ENDPOINT, CHARACTER_NAME):
+    
     message = json.loads(body)
     print(f" [x] Received message") 
     sentence = message['sentence']
@@ -34,21 +29,39 @@ def process_message(ch, method, properties, body):
         save_audio_to_file(audio, audio_file_path)
     except Exception as e:
         print(f"Error processing message: {e}")
+        
+def load_env():
+    load_dotenv(dotenv_path=".env", override=True)
+    RABBITMQ_URL = os.getenv("RABBITMQ_URL")
+    QUEUE_NAME = os.getenv("AUDIO_QUEUE")
+    API_ENDPOINT = "http://your-api-endpoint.com"
+    CHARACTER_NAME = os.getenv("CHARACTER_NAME")
+    GPT_SOVITS_ENDPOINT = os.getenv("GPT_SOVITS_ENDPOINT")
+    print(f"Loaded env vars, {RABBITMQ_URL}, {QUEUE_NAME}, {API_ENDPOINT}, {CHARACTER_NAME}, {GPT_SOVITS_ENDPOINT}")
+    return RABBITMQ_URL, QUEUE_NAME, API_ENDPOINT, CHARACTER_NAME, GPT_SOVITS_ENDPOINT
 
 def main():
-    try: 
-        # Set up connection and channel to RabbitMQ
-        connection = pika.BlockingConnection(pika.URLParameters(RABBITMQ_URL))
-        channel = connection.channel()
+    RABBITMQ_URL, QUEUE_NAME, API_ENDPOINT, CHARACTER_NAME, GPT_SOVITS_ENDPOINT = load_env()
+
+    # Set up connection and channel to RabbitMQ
+    connection = pika.BlockingConnection(pika.URLParameters(RABBITMQ_URL))
+    channel = connection.channel()
+    
+    channel.queue_declare(queue=QUEUE_NAME, durable=True)
+    
+    on_message_callback = partial(process_message, GPT_SOVITS_ENDPOINT=GPT_SOVITS_ENDPOINT, CHARACTER_NAME=CHARACTER_NAME)
+
+    
+    channel.basic_consume(queue=QUEUE_NAME, on_message_callback=on_message_callback, auto_ack=True)
+    
+    # Start listening to messages
+    print(' [*] Waiting for messages. To exit press CTRL+C')
+    channel.start_consuming()
         
-        channel.queue_declare(queue=QUEUE_NAME, durable=True)
-        
-        channel.basic_consume(queue=QUEUE_NAME, on_message_callback=process_message, auto_ack=True)
-        
-        # Start listening to messages
-        print(' [*] Waiting for messages. To exit press CTRL+C')
-        channel.start_consuming()
-        
+            
+if __name__ == '__main__':
+    try:
+        main()
     except KeyboardInterrupt:
         print('Interrupted')
         try:

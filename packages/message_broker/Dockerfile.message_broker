@@ -1,3 +1,29 @@
+# Use an official lightweight image
+FROM alpine:latest
+
+# Install SSH client and sshpass
+RUN apk --no-cache add openssh-client sshpass
+
+# Create a non-root user
+RUN adduser -D synthheadUser
+
+# Create .ssh directory with the correct permissions for the new user
+RUN mkdir -p -m 0700 /home/synthheadUser/.ssh
+
+# Copy the script into the container
+COPY GPT-Audio.sh /home/synthheadUser/GPT-Audio.sh
+
+# Make the script executable
+RUN chmod +x /home/synthheadUser/GPT-Audio.sh
+
+# Change ownership of the script and .ssh directory to the non-root user
+RUN chown -R synthheadUser:synthheadUser /home/synthheadUser
+
+# Switch to the non-root user
+USER synthheadUser
+
+CMD ["sh", "/home/synthheadUser/message_broker.sh"]
+
 # Base image for Python
 FROM python:3.9-slim
 
@@ -12,4 +38,4 @@ RUN pip install -r requirements.txt
 COPY . .
 
 # Run the Python RabbitMQ client script
-CMD ["python", "receive.py"]
+CMD ["python", "-u", "src/receive.py"]

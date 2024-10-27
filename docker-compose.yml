@@ -81,17 +81,24 @@
     environment:
       RABBITMQ_DEFAULT_USER: user
       RABBITMQ_DEFAULT_PASS: password
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 5s
+      timeout: 20s
+      retries: 5
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
 
-  receive_message-python-client:
+  message_broker_service:
+    container_name: message_broker_service
     build:
       context: ./packages/message_broker
       dockerfile: Dockerfile.message_broker
-    depends_on:
-      - rabbitmq
     env_file:
-      - ./packages/message_broker/.env
+      - ./packages/message_broker/.env.server
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
 
 volumes:
   pgdata:
