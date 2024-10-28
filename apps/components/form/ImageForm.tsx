@@ -10,7 +10,6 @@ import { AxiosProgressEvent } from "axios";
 import { Progress } from "../ui/progress";
 import { ModalType, useModalStore } from "@/stores/modalStore";
 import { Icon } from "@iconify/react";
-import { set } from "zod";
 
 const getImgURL = (file: File) => URL.createObjectURL(file);
 
