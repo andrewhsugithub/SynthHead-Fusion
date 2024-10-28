@@ -1,4 +1,4 @@
-import sys, os
+import sys, os, time
 import pika
 from gpt_sovits_client import GPTSoVITSClient
 from dotenv import load_dotenv
@@ -7,6 +7,9 @@ from functools import partial
 import requests
 
 def save_audio_to_file(audio, file_path):
+    # Ensure the directory exists
+    os.makedirs(os.path.dirname(file_path), exist_ok=True)
+    
     with open(file_path, 'wb') as f:
         f.write(audio)
     print(f"Audio saved to {file_path}")
@@ -38,6 +41,10 @@ def process_video_queue(ch, method, properties, body, REAL3D_ENDPOINT, MUSETALK_
     emotion = message['emotion']
     user_id = message['user_id']
     access_token = message['access_token']
+    
+    while not os.path.exists(audio_file_path):
+        print(f"Waiting for audio file to be saved at {audio_file_path}")
+        time.sleep(5)
     
     real3d_data = {
         "drv_aud": audio_file_path,
