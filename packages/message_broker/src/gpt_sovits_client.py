@@ -1,21 +1,17 @@
-import requests
-class GPTSoVITSClient:
-    def __init__(self, api_endpoint, max_pool_connections=10) -> None:
-        self.base_url = api_endpoint
-                
-        # Create a session with a connection pool
-        self.session = requests.Session()
-        self.adapter = requests.adapters.HTTPAdapter(pool_connections=max_pool_connections, pool_maxsize=max_pool_connections)
-        self.session.mount('http://', self.adapter)
-        self.session.mount('https://', self.adapter)
-        
-    def get_character_list(self):
-        url = f"{self.base_url}/character_list"
-        response = self.session.get(url)
-        response.raise_for_status()
-        return response.json()
+import aiohttp
+import asyncio
 
-    def get_audio_with_post(self, character, emotion, text, text_language="zh", format="mp3"):
+class GPTSoVITSClient:
+    def __init__(self, api_endpoint) -> None:
+        self.base_url = api_endpoint
+
+    async def get_character_list(self):
+        url = f"{self.base_url}/character_list"
+        async with self.session.get(url) as response:
+            response.raise_for_status()
+            return await response.json()
+
+    async def get_audio_with_post(self, character, emotion, text, text_language="zh", format="mp3", session=None):
         data = {
             "character": character,
             "emotion": emotion,
@@ -24,16 +20,16 @@ class GPTSoVITSClient:
             "format": format
         }
         url = f"{self.base_url}/tts"
-        response = self.session.post(url, json=data)
-        response.raise_for_status()
-        return response.content
-    
-    def get_audio_with_get(self, data):
-        data = data.parse.quote(data) # format chinese characters to url encoding
-        url = f"{self.base_url}/tts?character={data['character']}&text={data['text']}"
-        response = self.session.get(url)
-        response.raise_for_status()
-        return response.content
+        async with session.post(url, json=data) as response:
+            response.raise_for_status()
+            return await response.read() 
 
-    def close(self):
-        self.session.close()
+    async def get_audio_with_get(self, character, text, session=None):
+        # Ensure that Chinese characters in the query string are URL-encoded
+        character = aiohttp.helpers.quote(character, safe='')
+        text = aiohttp.helpers.quote(text, safe='')
+        url = f"{self.base_url}/tts?character={character}&text={text}"
+        
+        async with session.get(url) as response:
+            response.raise_for_status()
+            return await response.read()
