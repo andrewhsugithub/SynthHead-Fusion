@@ -7,7 +7,12 @@ from dotenv import load_dotenv
 import aiohttp
 import aiofiles
 from aio_pika import connect_robust, Message, ExchangeType
-from gpt_sovits_client import GPTSoVITSClient
+from gpt_sovits_client import GPTSoVITSClient    
+from collections import defaultdict
+import subprocess
+
+#! need to think for a better way to keep track of the current time in video (maybe we can use a class or database)
+video_time_tracker = defaultdict(lambda: defaultdict(dict)) # Global variable to keep track of the current time in video => { group_id: { sequence_number: { segment_end_time: int, audio_file_path: string } } }
 
 async def save_audio_to_file(audio, file_path):
     # Ensure the directory exists
@@ -22,6 +27,15 @@ async def wait_for_file(file_path, interval=5):
         print(f"Waiting for audio file to be saved at {file_path}")
         await asyncio.sleep(interval)
         
+async def wait_for_ending_time(group_id, sequence_number, check_interval=0.5):
+    global video_time_tracker
+
+    while sequence_number - 1 not in video_time_tracker[group_id] or video_time_tracker[group_id][sequence_number - 1].get("segment_end_time") is None:
+        print(f"Waiting for ending time of group_id={group_id}, sequence_number={sequence_number - 1}")
+        await asyncio.sleep(check_interval)
+
+    return video_time_tracker[group_id][sequence_number - 1]["segment_end_time"]
+        
 async def recreate_session(session_container):
     if not session_container['session'].closed:
         await session_container['session'].close()
@@ -31,11 +45,16 @@ async def process_audio_queue(message, GPT_SOVITS_ENDPOINT, CHARACTER_NAME, sess
     await message.ack()
     msg_content = json.loads(message.body)
     print(f" [x] Received message from audio queue")
+    group_id = msg_content['group_id']
     sentence = msg_content['sentence']
     emotion = msg_content['emotion']
     user_id = msg_content['user_id']
     access_token = msg_content['access_token']
     audio_file_path = msg_content['audio_file_path']
+    sequence_number = msg_content['sequence_number']
+    
+    global video_time_tracker
+    video_time_tracker[group_id][sequence_number] = {"segment_end_time": None, "audio_file_path": audio_file_path}
     
     print(f"sentence: {sentence}, emotion: {emotion}, user_id: {user_id}, access_token: {access_token}, audio_file_path: {audio_file_path}")
     
@@ -51,22 +70,68 @@ async def process_audio_queue(message, GPT_SOVITS_ENDPOINT, CHARACTER_NAME, sess
         except Exception as e:
             print(f"Error processing message for audio queue: {e}")
             break
+        
+def get_audio_duration(audio_file_path):
+    try:
+        # Run FFmpeg with the '-i' flag to retrieve file info
+        result = subprocess.run(
+            ["ffprobe", "-i", audio_file_path, "-show_entries", "format=duration", "-v", "quiet", "-of", "csv=p=0"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True
+        )
+        # Parse the duration from the output
+        duration = float(result.stdout.strip())
+        return duration
+    except Exception as e:
+        print(f"Error retrieving audio duration: {e}")
+        return 0        
+    
+# get starting frame and ending frame
+async def get_ending_time(audio_file_path, group_id, sequence_number): # returns [starting frame, ending frame] both inclusive
+    global video_time_tracker
+
+    previous_segment_end_time = 0
+
+    # Check for the ending frame of the previous sequence
+    if sequence_number != 0:
+        previous_segment_end_time = await wait_for_ending_time(group_id, sequence_number)
+
+    # Get the duration of the current audio file
+    audio_duration = get_audio_duration(audio_file_path)  # Duration in seconds
+
+    # Calculate the segment's end time
+    segment_start_time = previous_segment_end_time
+    segment_end_time = previous_segment_end_time + audio_duration
+
+    # Update the global video_time_tracker
+    video_time_tracker[group_id][sequence_number] = {
+        "segment_end_time": segment_end_time,
+        "audio_file_path": audio_file_path,
+    }
+
+    return [segment_start_time, segment_end_time]
 
 async def process_video_queue(message, REAL3D_ENDPOINT, MUSETALK_ENDPOINT, session):
     await message.ack()
     msg_content = json.loads(message.body)
     print(f" [x] Received message from video queue")
+    group_id = msg_content['group_id']
     audio_file_path = msg_content['drv_aud']
     emotion = msg_content['emotion']
     user_id = msg_content['user_id']
     access_token = msg_content['access_token']
+    sequence_number = msg_content['sequence_number']
     
     await wait_for_file(audio_file_path)
+    
+    video_segment = await get_ending_time(audio_file_path=audio_file_path, group_id=group_id, sequence_number=sequence_number) # returns [starting time, ending time] both inclusive
 
     real3d_data = {
         "drv_aud": audio_file_path,
         "emotion": emotion,
         "user_id": user_id,
+        "video_segment": video_segment,
     }
     
     print(f"real3d_data: {real3d_data}")
@@ -127,7 +192,7 @@ async def main():
         await asyncio.Future()  # Keep the main function running
     finally:
         await connection.close()
-        await session.close()
+        await session_container['session'].close()
 
 if __name__ == '__main__':
     try:
