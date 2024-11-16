@@ -173,9 +173,9 @@ const constants = {
 };
 
 const EMOTIONS_LIST = [
-  "happy",
-  "sad",
+  "default",
   "angry",
+  "calm",
   "cheerful",
   "depressed",
 ] as const;

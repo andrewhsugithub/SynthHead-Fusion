@@ -8,7 +8,7 @@ import ImageForm from "../form/ImageForm";
 
 const ImageCard = () => {
   const [selectedEmotion, setSelectedEmotion] =
-    React.useState<EMOTION_TYPES>("happy");
+    React.useState<EMOTION_TYPES>("default");
 
   const handleSelectEmotion = (emotion: EMOTION_TYPES) => {
     setSelectedEmotion(emotion);

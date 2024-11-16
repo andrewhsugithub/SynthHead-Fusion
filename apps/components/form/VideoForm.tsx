@@ -109,7 +109,7 @@ const VideoForm = ({ className }: VideoFormProps) => {
           <Input
             id="video" //TODO: rename
             type="file"
-            accept="video/*"
+            accept=".mp4"
             onChange={handleVideoChange}
             className="hidden"
           />
