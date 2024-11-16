@@ -75,9 +75,15 @@ const VideoForm = ({ className }: VideoFormProps) => {
 
   const handleSubmit = async () => {
     if (!video) return;
+    const fileType = video.type.split("/");
+
+    const newVideo = new File([video], `DrivingVideo.${fileType[1]}`, {
+      type: video.type,
+    });
+    console.log(fileType[1]);
 
     const formData = new FormData();
-    formData.append("uploadedFile", video);
+    formData.append("uploadedFile", newVideo);
 
     await protectedAxios
       .postForm("/upload", formData, {

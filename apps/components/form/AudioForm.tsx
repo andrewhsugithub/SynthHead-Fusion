@@ -1,8 +1,7 @@
-﻿import React, { useEffect } from "react";
+import React, { useEffect } from "react";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { EMOTION_TYPES } from "@/constants";
-import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { Button } from "../ui/button";
 import { protectedAxios } from "@/utils/protectedAxios";
@@ -11,85 +10,81 @@ import { Progress } from "../ui/progress";
 import { ModalType, useModalStore } from "@/stores/modalStore";
 import { Icon } from "@iconify/react";
 
-const getImgURL = (file: File) => URL.createObjectURL(file);
+const getAudioURL = (file: File) => URL.createObjectURL(file);
 
-interface ImageThumbnailProps {
-  img: File | null;
+interface AudioProps {
+  audio: File | null;
   emotion: EMOTION_TYPES;
-  unselectImage: () => void;
+  unselectAudio: () => void;
 }
 
-const ImageThumbnail = ({
-  img,
-  emotion,
-  unselectImage,
-}: ImageThumbnailProps) => {
+const AudioThumbnail = ({ audio, emotion, unselectAudio }: AudioProps) => {
   return (
     <div className="relative h-full w-full">
-      {img ? (
+      {audio ? (
         <>
           <Icon
             icon="proicons:cancel"
-            onClick={unselectImage}
+            onClick={unselectAudio}
             className="absolute right-2 text-black w-6 h-6 top-2 hover:cursor-pointer z-50"
           />
-          <Image
-            src={getImgURL(img)}
-            alt={`Upload ${emotion} image`}
-            fill
-            objectFit="contain"
-          />
+          <audio
+            controls
+            src={getAudioURL(audio)}
+            className="relative h-full w-full"
+          ></audio>
         </>
       ) : (
         <div className="h-full pb-5 flex justify-center items-end text-center ">
-          Upload {emotion} Image
+          Upload {emotion} Audio
         </div>
       )}
     </div>
   );
 };
 
-interface ImageFormProps extends React.HTMLAttributes<HTMLDivElement> {
+interface AudioFormProps extends React.HTMLAttributes<HTMLDivElement> {
   emotion: EMOTION_TYPES;
 }
 
-const ImageForm = ({ emotion, className }: ImageFormProps) => {
-  const [img, setImg] = React.useState<File | null>(null);
+const AudioForm = ({ emotion, className }: AudioFormProps) => {
+  const [audio, setAudio] = React.useState<File | null>(null);
   const [uploadPercentage, setUploadPercentage] = React.useState(0);
   const isActive =
     useModalStore((state) => state.activeModal) === ModalType.AVATAR;
 
   useEffect(() => {
     if (!isActive) {
-      setImg(null);
+      setAudio(null);
       setUploadPercentage(0);
     }
   }, [isActive]);
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAudioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setImg(file);
+      setAudio(file);
       setUploadPercentage(0);
     }
   };
 
-  const unselectImage = () => {
-    setImg(null);
+  const unselectAudio = () => {
+    setAudio(null);
     setUploadPercentage(0);
   };
 
   const handleSubmit = async () => {
-    if (!img) return;
-    const fileType = img.type.split("/");
+    if (!audio) return;
+    const fileType = audio.type.split("/");
 
-    const newImg = new File([img], `${emotion}.${fileType[1]}`, {
-      type: img.type,
+    const newAudio = new File([audio], `${emotion}.${fileType[1]}`, {
+      type: audio.type,
     });
     console.log(fileType[1]);
+    console.log(newAudio.name);
 
     const formData = new FormData();
-    formData.append("uploadedFile", newImg);
+    formData.append("uploadedFile", newAudio);
     formData.append("emotion", emotion);
 
     await protectedAxios
@@ -101,7 +96,7 @@ const ImageForm = ({ emotion, className }: ImageFormProps) => {
         },
       })
       .catch((e) => {
-        console.error("Error uploading image:", e);
+        console.error("Error uploading audio:", e);
         setUploadPercentage(0);
       });
   };
@@ -109,19 +104,19 @@ const ImageForm = ({ emotion, className }: ImageFormProps) => {
   return (
     <>
       <div className={cn("p-4 flex justify-center items-center", className)}>
-        <div className=" bg-slate-200 w-[400px] h-[400px] rounded-md border-dotted border-2 border-black">
+        <div className=" bg-slate-200 w-[400px] h-[100px] rounded-md border-dotted border-2 border-black">
           <Label htmlFor={emotion} className="hover:cursor-pointer">
-            <ImageThumbnail
-              img={img}
+            <AudioThumbnail
+              audio={audio}
               emotion={emotion}
-              unselectImage={unselectImage}
+              unselectAudio={unselectAudio}
             />
           </Label>
           <Input
             type="file"
             id={emotion}
-            accept="image/*"
-            onChange={handleImageChange}
+            accept="audio/*"
+            onChange={handleAudioChange}
             className="hidden"
           />
           <Progress className="-my-1" value={uploadPercentage} />
@@ -133,11 +128,11 @@ const ImageForm = ({ emotion, className }: ImageFormProps) => {
           <span className="text-red-500 uppercase italic">
             &nbsp;{emotion}&nbsp;
           </span>
-          image
+          audio
         </Button>
       </div>
     </>
   );
 };
 
-export default ImageForm;
+export default AudioForm;
