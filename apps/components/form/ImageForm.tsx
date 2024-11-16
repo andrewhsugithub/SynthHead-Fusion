@@ -120,7 +120,7 @@ const ImageForm = ({ emotion, className }: ImageFormProps) => {
           <Input
             type="file"
             id={emotion}
-            accept="image/*"
+            accept=".png"
             onChange={handleImageChange}
             className="hidden"
           />
