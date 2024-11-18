@@ -4,7 +4,7 @@ scripts/.env.sh
 scripts/services/.env.server.sh
 
 # Temporary ignoring repos not added to submodules
-Real-ESRGAN/
+#Real-ESRGAN/
 Read3D-Interface/
 
 # Probably never going to use it
